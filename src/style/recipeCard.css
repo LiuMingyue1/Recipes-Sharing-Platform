@@ -1,0 +1,33 @@
+.recipe-card {
+    width: 360px;
+    text-align: center;
+    background-color: transparent; /* 背景颜色透明 */
+    padding: 10px 0;
+  }
+  
+  .recipe-image {
+    width: 360px;
+    height: 513px;
+    object-fit: cover;
+    border: none; /* 去掉图片边框 */
+    border-radius: 0; /* 去掉图片圆角 */
+  }
+  
+  .recipe-details {
+    padding: 10px 0;
+    text-align: left;
+  }
+  
+  .recipe-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 5px 0;
+    color: #042306;
+  }
+  
+  .recipe-author {
+    font-size: 14px;
+    color: #042306;
+    margin: 0;
+  }
+  

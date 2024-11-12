@@ -1,5 +1,3 @@
-import Footer from "../components/footer";
-import HeroBanner from "../components/HeroBanner";
 import Packagetext from "../components/Packagetext";
 import DestinationCard from "../components/DestinationCard"
 
@@ -8,11 +6,7 @@ const Packages = () => {
     return (
       <div>
         <div>
-        <HeroBanner
-          imageSrc="public/assets/tourpackages.jpg"
-          title="Explore the World"
-          subtitle="with Voyage"
-        />
+        
         </div>
 
         <div class="bg-white">
@@ -157,7 +151,6 @@ const Packages = () => {
 
         <br></br>
 
-        <Footer></Footer>
 
 
 

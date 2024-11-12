@@ -1,0 +1,56 @@
+/* 确保背景颜色覆盖整个页面 */
+.home-wrapper {
+    background-color: #FFF8DC;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .category-navigation {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* 按钮之间的间距 */
+    margin: 20px 0;
+  }
+  
+  .category-button {
+    background-color: #FFF8DC;
+    font-size: 16px;
+    color: #042306;
+    padding: 10px 15px;
+    width: 10%; /* 每个按钮宽度 */
+    text-align: center;
+    border: none; /* 去除默认边框 */
+    background-color: transparent; /* 背景透明 */
+    cursor: pointer; /* 鼠标悬浮手型指针 */
+    transition: font-weight 0.3s ease; /* 添加过渡效果 */
+  }
+  
+  .category-button:hover {
+    font-weight: bold; /* 悬浮时字体加粗 */
+  }
+  
+  /* 主内容区 */
+  .main-content {
+    flex: 1;
+  }
+
+  .home-container {
+    background-color: #FFF8DC;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    margin-left: 50px;
+  }
+  
+  .recipe-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); /* 响应式布局 */
+    gap: 20px;
+    justify-content: center; /* 保证内容水平居中 */
+    width: 100%;
+    max-width: 1440px; /* 控制最大宽度 */
+  }
+  
+  

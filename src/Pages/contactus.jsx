@@ -1,4 +1,3 @@
-import Footer from "../components/footer";
 import ContactForm from "../components/contactform";
 import ContactUsInfo from "../components/contactusinfo";
 import ContactText from "../components/contacttext";
@@ -65,7 +64,6 @@ const ContactUs = () => {
           </div>
         <br></br><br></br>
         <ContactUsInfo></ContactUsInfo>
-        <Footer></Footer>
       </div>
     );
   };

@@ -9,7 +9,7 @@ import emailIcon from '../assets/startnav3.svg';
 import coeaterIcon from '../assets/co-eater.svg';
 
 
-const Home = () => {
+const Start = () => {
   return (
     <>
     <div className="background">
@@ -21,8 +21,8 @@ const Home = () => {
         </div>
         <img src={coeaterIcon} alt="coeaters Icon" className="coeatericon" />
         <div className="startLinks">
-          <Link to="" className="homebutton1">Recipes</Link>
-          <Link to="" className="loginbutton">Login</Link>
+          <Link to="/home" className="homebutton1">Recipes</Link>
+          <Link to="/login" className="loginbutton">Login</Link>
         </div>
       </div>
 
@@ -32,7 +32,7 @@ const Home = () => {
           <br />
           <h5 className="solgan">Enter ingredients to get recommended recipes.</h5>
           <div className="startlinks-container"> 
-              <Link to="" className="homebutton">Get Recipes</Link>
+              <Link to="/home" className="homebutton">Get Recipes</Link>
               <Link to="" className="detialbutton"> <img src={randomIcon} alt="Random Icon" className="icon" /> Random Pick</Link>
           </div>
         </div>
@@ -43,4 +43,4 @@ const Home = () => {
     );
   };
   
-  export default Home;
+  export default Start;

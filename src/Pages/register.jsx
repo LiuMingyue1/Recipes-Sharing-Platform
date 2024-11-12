@@ -1,4 +1,3 @@
-import Footer from "../components/footer";
 import Text from "../components/text";
 import RegisterForm from "../components/registerform";
 
@@ -15,7 +14,6 @@ const Register = () => {
       <br></br><br></br><br></br><br></br>
 
         <RegisterForm></RegisterForm>
-        <Footer></Footer>
       </div>
     );
   };
