@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 const LoginForm = () => {
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -10,63 +9,87 @@ const LoginForm = () => {
     console.log(email, password);
   };
 
+  return (
+    <div style={{ width: '100%', maxWidth: '400px', marginTop: '-50px' }}> {/* 上移50px */}
+      <h2 style={{ marginTop: '10px', textAlign: 'center', fontSize: '24px', fontWeight: 'bold', color: '#333300' }}>Login</h2>
 
-    return (
-        <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-          <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-            <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Login</h2>
-          </div>
-    
-          <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <form className="space-y-10" onSubmit={handleSubmit}>
-              {/* Email Input */}
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Email address</label>
-                <div className="mt-2">
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-              </div>
-    
-              {/* Password Input */}
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">Password</label>
-                <div className="mt-2">
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    className="block w-full rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </div>
-              </div>
-    
-              {/* Submit Button */}
-              <div>
-                <button type="submit" className="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Login</button>
-              </div>
-            </form>
-            <p class="mt-10 text-center text-sm text-gray-500">
-              Not a member?
-              <a href="#" class="font-semibold leading-6 text-blue-600 hover:text-blue-500">Sign up for free</a>
-            </p>
-          </div>
+      <form onSubmit={handleSubmit} style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {/* Email Input */}
+        <div>
+          <label htmlFor="email" style={{ display: 'block', fontSize: '14px', fontWeight: 'medium', color: '#333300' }}>Email address</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            style={{
+              width: '100%',
+              padding: '10px',
+              fontSize: '14px',
+              color: '#333300',
+              border: '1px solid #ccc',
+              borderRadius: '5px',
+              outline: 'none',
+              marginTop: '5px',
+            }}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </div>
-      );
-    }
-    
-    export default LoginForm;
 
+        {/* Password Input */}
+        <div>
+          <label htmlFor="password" style={{ display: 'block', fontSize: '14px', fontWeight: 'medium', color: '#333300' }}>Password</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            required
+            style={{
+              width: '100%',
+              padding: '10px',
+              fontSize: '14px',
+              color: '#333300',
+              border: '1px solid #ccc',
+              borderRadius: '5px',
+              outline: 'none',
+              marginTop: '5px',
+            }}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
 
+        {/* Submit Button */}
+        <button
+          type="submit"
+          style={{
+            width: '100%',
+            padding: '10px',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: '#FFF',
+            backgroundColor: '#333300',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            textAlign: 'center',
+          }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = '#2b2b2b')}
+          onMouseOut={(e) => (e.target.style.backgroundColor = '#333300')}
+        >
+          Login
+        </button>
+      </form>
+
+      <p style={{ marginTop: '20px', textAlign: 'center', fontSize: '14px', color: '#333300' }}>
+        Not a member?{' '}
+        <a href="/register" style={{ fontWeight: 'bold', color: '#333300', textDecoration: 'underline' }}>
+          Sign up for free
+        </a>
+      </p>
+    </div>
+  );
+};
+
+export default LoginForm;
