@@ -15,7 +15,7 @@
   
   /* 左侧布局 */
   .detail-left {
-    width: 33%;
+    width: 35%;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -23,13 +23,13 @@
   }
   
   .detail-image-container {
-    height: 70%;;
+    height: 82%;;
     text-align: center;
   }
   
   .detail-image {
     margin-top: 20px;
-    margin-left: 10px;
+    margin-left: 20px;
     width: 90%;
     height: 95%;
     object-fit: cover;

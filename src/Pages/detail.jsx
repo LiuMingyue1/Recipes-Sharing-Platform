@@ -1,5 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Navbar from "../components/navbar";
 import recipes from '../assets/constants/mockRecipe.json'; 
 import comments from '../assets/constants/mockComment.json'; 
@@ -56,7 +57,10 @@ const Detail = () => {
               </div>
             </div>
             <div className="author-section">
-              <p>By {recipe.author}</p>
+              {/* 使用 recipe.userId 作为作者链接 */}
+              <Link to={`/profile/${recipe.userId}`} className="recipe-author-link">
+                <p>By {recipe.author}</p>
+              </Link>
               <button className="follow-button">Follow</button>
             </div>
           </div>

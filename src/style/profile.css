@@ -1,0 +1,109 @@
+.profile-container-custom {
+    background-color: #FFF8DC;
+    width: 100%;
+    position: fixed;
+    overflow: hidden; /* 限制滑动区域 */
+  }
+  
+  .profile-card-custom {
+    text-align: center;
+    padding: 20px;
+    width: 100%;
+    color: #333300;
+  }
+  
+  .profile-avatar-custom {
+    width: 90px; 
+    height: 90px;
+    border-radius: 50%;
+    margin: 0 auto;
+    display: block;
+  }
+  
+  .profile-name-custom {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  .profile-info-group-custom {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 16px;
+  }
+  
+  .profile-info-item-custom {
+    font-size: 16px;
+    text-align: left;
+  }
+  
+  .profile-info-item-custom span {
+    font-weight: bold;
+  }
+  
+  .profile-recipe-section {
+    background-color: #FAF3DD;
+    width: 85%;
+    margin: 20px auto;
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden; /* 限制内容只在框内滑动 */
+  }
+  
+  .button-group-custom {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  .toggle-button-custom {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 10px;
+    font-size: 15px;
+    color: #333300;
+  }
+  
+  .toggle-button-custom.active {
+    font-weight: bold;
+    background-color: #FFDEAD;
+  }
+  
+  .profile-recipe-list-custom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+    margin-top: 50px;
+    overflow-y: auto; /* 允许垂直滚动 */
+    max-height: 400px; /* 设置最大高度以便框内滑动 */
+    padding-right: 10px; /* 避免滑动条遮挡内容 */
+  }
+  
+  .recipe-card {
+    background-color: #FFFFFF;
+    border-radius: 5px;
+    padding: 15px;
+    width: calc(33.33% - 20px); /* 一行三个卡片 */
+    box-sizing: border-box;
+  }
+  
+  .recipe-card img {
+    width: 100%; /* 图片自动缩放 */
+    height: auto;
+    border-radius: 5px;
+  }
+  
+  .recipe-card h3 {
+    text-align: center;
+
+    color: #333300;
+    font-size: 16px;
+    margin: 10px 0;
+  }
+  

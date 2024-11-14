@@ -6,7 +6,9 @@ import recipes from '../assets/constants/mockRecipe.json';
 const Home = () => {
   return (
     <div className="home-wrapper">
+      <div className="homenavbar">
       <Navbar currentPageLink="/home" />
+      </div>
       
       <div className="category-navigation">
         <button className="category-button">Most Popular</button>
@@ -25,6 +27,7 @@ const Home = () => {
               image={recipe.image} 
               name={recipe.name} 
               author={recipe.author} 
+              userId={recipe.userId}
             />
           ))}
         </div>
