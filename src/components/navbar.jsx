@@ -31,7 +31,7 @@ const Navbar = ({ currentPageLink }) => {
         <Link to="/add">
           <img src={navaddIcon} alt="Add Icon" className="navbar-icon" />
         </Link>
-        <Link to="/profile">
+        <Link to="/login">
           <img src={navuserIcon} alt="User Icon" className="navbar-icon" />
         </Link>
         <Link to="/like">
