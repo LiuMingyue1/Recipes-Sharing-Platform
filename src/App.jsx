@@ -9,6 +9,7 @@ import Packages from "./Pages/packages"
 import { useLocation } from 'react-router-dom';
 import Login from "./Pages/login"
 import Detail from "./Pages/detail"
+import Add from "./Pages/add"
 
 
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/contactus" element={<ContactUs />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/add" element={<Add />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
