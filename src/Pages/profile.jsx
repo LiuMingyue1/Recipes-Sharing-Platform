@@ -3,20 +3,19 @@ import { useParams } from 'react-router-dom';
 import Navbar from "../components/navbar";
 import users from '../assets/constants/mockUser.json'; 
 import recipes from '../assets/constants/mockRecipe.json';
-import RecipeCard from "../components/recipeCard"; // 引入 RecipeCard
+import RecipeCard from "../components/recipeCard";
 import "../style/profile.css";
 import useravatar from "../assets/avatar-test.svg";
 
 const Profile = () => {
   const { userId } = useParams();
   const user = users.find(user => user.id === parseInt(userId));
-  const [viewMode, setViewMode] = useState('publish'); // 控制显示 published 或 liked recipes
+  const [viewMode, setViewMode] = useState('publish');
 
   if (!user) {
     return <div>User not found</div>;
   }
 
-  // 根据 viewMode 过滤食谱
   const filteredRecipes = viewMode === 'publish'
     ? recipes.filter(recipe => user.publishedRecipes.includes(recipe.id))
     : recipes.filter(recipe => user.likedRecipes.includes(recipe.id));
@@ -44,7 +43,7 @@ const Profile = () => {
         </div>
       </div>
 
-      <div className="profile-recipe-section">
+      <div className="button-wrapper">
         <div className="button-group-custom">
           <button 
             className={`toggle-button-custom ${viewMode === 'publish' ? 'active' : ''}`} 
@@ -59,6 +58,9 @@ const Profile = () => {
             Liked Recipes
           </button>
         </div>
+      </div>
+
+      <div className="profile-recipe-section">
         <div className="profile-recipe-list-custom">
           {filteredRecipes.map(recipe => (
             <RecipeCard 
@@ -66,7 +68,7 @@ const Profile = () => {
               id={recipe.id}
               image={recipe.image}
               name={recipe.name}
-              author={''} // 不显示作者
+              author={''}
               userId={recipe.userId}
             />
           ))}
