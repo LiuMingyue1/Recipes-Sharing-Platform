@@ -8,6 +8,7 @@ import ContactUs from "./Pages/contactus"
 import Packages from "./Pages/packages"
 import { useLocation } from 'react-router-dom';
 import Login from "./Pages/login"
+import Detail from "./Pages/detail"
 
 
 const App = () => {
@@ -19,6 +20,7 @@ const App = () => {
         <Route path="/" element={<Start />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/detail/:recipeId" element={<Detail />} />
         <Route path="/packages" element={<Packages />} />
         <Route path="/register" element={<Register />} />
         <Route path="/contactus" element={<ContactUs />} />

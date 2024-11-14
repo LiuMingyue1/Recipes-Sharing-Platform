@@ -1,12 +1,7 @@
-import Text from "../components/text";
-import AllLink from "../components/link";
 import Navbar from "../components/navbar";
-import { Link } from "react-router-dom";
 import RecipeCard from '../components/recipeCard';
 import "../style/homepage.css";
 import recipes from '../assets/constants/mockRecipe.json'; 
-
-
 
 const Home = () => {
   return (
@@ -25,7 +20,8 @@ const Home = () => {
         <div className="recipe-list">
           {recipes.map(recipe => (
             <RecipeCard 
-              key={recipe.id} 
+              key={recipe.id}
+              id={recipe.id} 
               image={recipe.image} 
               name={recipe.name} 
               author={recipe.author} 
@@ -36,5 +32,5 @@ const Home = () => {
     </div>
   );
 };
-  
-  export default Home;
+
+export default Home;
