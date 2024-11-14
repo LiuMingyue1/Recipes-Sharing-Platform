@@ -1,56 +1,66 @@
 /* 确保背景颜色覆盖整个页面 */
 .home-wrapper {
-    background-color: #FFF8DC;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .category-navigation {
-    display: flex;
-    justify-content: center;
-    gap: 10px; /* 按钮之间的间距 */
-    margin: 20px 0;
-  }
-  
-  .category-button {
-    background-color: #FFF8DC;
-    font-size: 16px;
-    color: #042306;
-    padding: 10px 15px;
-    width: 10%; /* 每个按钮宽度 */
-    text-align: center;
-    border: none; /* 去除默认边框 */
-    background-color: transparent; /* 背景透明 */
-    cursor: pointer; /* 鼠标悬浮手型指针 */
-    transition: font-weight 0.3s ease; /* 添加过渡效果 */
-  }
-  
-  .category-button:hover {
-    font-weight: bold; /* 悬浮时字体加粗 */
-  }
-  
-  /* 主内容区 */
-  .main-content {
-    flex: 1;
-  }
+  background-color: #FFF8DC;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-  .home-container {
-    background-color: #FFF8DC;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    margin-left: 50px;
-  }
-  
-  .recipe-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); /* 响应式布局 */
-    gap: 20px;
-    justify-content: center; /* 保证内容水平居中 */
-    width: 100%;
-    max-width: 1440px; /* 控制最大宽度 */
-  }
-  
-  
+/* 固定 Navbar */
+.homenavbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 15; /* 确保 Navbar 在所有内容之上 */
+}
+
+/* 固定 Category Navigation */
+.category-navigation {
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* 按钮之间的间距 */
+  margin: 20px 0;
+  position: fixed;
+  top: 60px; /* 确保在 Navbar 下方 */
+  width: 100%;
+  z-index: 10; /* 确保 Category Navigation 在滚动内容上方 */
+  padding: 10px 0;
+  background-color: #FFF8DC;
+}
+
+/* Category Button 样式 */
+.category-button {
+  background-color: transparent; /* 保持透明背景 */
+  font-size: 16px;
+  color: #042306;
+  padding: 10px 15px;
+  width: 10%;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  transition: font-weight 0.3s ease;
+}
+
+.category-button:hover {
+  font-weight: bold;
+}
+
+/* 可滚动的卡片区域 */
+.home-container {
+  margin-top: 140px; /* 留出固定 Navbar 和 Category Navigation 的空间 */
+  overflow-y: auto; /* 仅 Card 部分滚动 */
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.recipe-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 20px;
+  justify-content: center; /* 确保内容水平居中 */
+  width: 100%;
+  max-width: 1440px; /* 控制最大宽度 */
+  margin-left: 50px;
+}
