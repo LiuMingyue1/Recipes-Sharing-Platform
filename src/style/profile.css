@@ -74,7 +74,7 @@
     background-color: #FFDEAD;
   }
   
-  .profile-recipe-list-custom {
+   .profile-recipe-list-custom {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
@@ -85,7 +85,7 @@
     padding-right: 10px; /* 避免滑动条遮挡内容 */
   }
   
-  .recipe-card {
+  .profile-recipe-list-custom  .recipe-card {
     background-color: #FFFFFF;
     border-radius: 5px;
     padding: 15px;
@@ -93,13 +93,13 @@
     box-sizing: border-box;
   }
   
-  .recipe-card img {
+  .profile-recipe-list-custom  .recipe-card img {
     width: 100%; /* 图片自动缩放 */
     height: auto;
     border-radius: 5px;
   }
   
-  .recipe-card h3 {
+  .profile-recipe-list-custom .recipe-card h3 {
     text-align: center;
 
     color: #333300;
