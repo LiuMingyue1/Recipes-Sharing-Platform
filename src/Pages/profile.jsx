@@ -5,6 +5,7 @@ import users from '../assets/constants/mockUser.json';
 import recipes from '../assets/constants/mockRecipe.json';
 import RecipeCard from "../components/recipeCard";
 import "../style/profile.css";
+import useravatar from "../assets/avatar-test.svg";
 
 const Profile = () => {
   const { userId } = useParams();
@@ -24,7 +25,7 @@ const Profile = () => {
       <Navbar currentPageLink={`/profile/${userId}`} />
       
       <div className="profile-card-custom">
-        <img src={user.avatar} alt={user.name} className="profile-avatar-custom" />
+        <img src={useravatar} alt={user.name} className="profile-avatar-custom" />
         <h2 className="profile-name-custom">{user.name}</h2>
         
         <div className="profile-info-group-custom">
