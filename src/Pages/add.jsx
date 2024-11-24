@@ -96,6 +96,18 @@ const Add = () => {
           </div>
       </div>
         <div className="form-group">
+          <button className="button">
+            Appetizers
+          </button>
+          <button className="button">
+            Main Courses
+          </button>
+          <button className="button">
+            Desserts
+          </button>
+          <button className="button">
+            Beverages
+          </button>
           <label htmlFor="recipeName">Recipe Name:</label>
           <input
             type="text"

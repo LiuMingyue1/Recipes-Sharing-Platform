@@ -30,6 +30,17 @@
     margin-bottom: 5px;
   }
   
+  .form-group button {
+    background-color: #E0E8A3;
+    border-radius: 10px;
+    margin-right: 40px;
+    margin-bottom: 10px;
+    height: 36px;
+    width: 200px;
+    align-items: center;
+    justify-content: center;
+  }
+
   .form-group input,
   .form-group textarea {
     width: 1116px;
