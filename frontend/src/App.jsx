@@ -1,33 +1,31 @@
-import { Link, Route, Routes } from "react-router-dom"
-import Start from "./Pages/start"
-import Profile from "./Pages/profile"
-import Home from "./Pages/home"
-import NotFound from "./Pages/NotFound"
-import Register from "./Pages/register"
-import { useLocation } from 'react-router-dom';
-import Login from "./Pages/login"
-import Detail from "./Pages/detail"
-import Add from "./Pages/add"
-
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import AuthProvider from "./contexts/AuthContext"; // 引入 AuthProvider
+import ProtectedRoute from "./components/ProtectedRoute"; // 受保护路由
+import Start from "./Pages/start";
+import Profile from "./Pages/profile";
+import Home from "./Pages/home";
+import NotFound from "./Pages/NotFound";
+import Register from "./Pages/register";
+import Login from "./Pages/login";
+import Detail from "./Pages/detail";
+import Add from "./Pages/add";
 
 const App = () => {
-  const location = useLocation();
   return (
-    <>
-
+    <AuthProvider>
       <Routes>
         <Route path="/" element={<Start />} />
-        <Route path="/profile/:userId" element={<Profile />} />
+        <Route path="/profile/:userId" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/home" element={<Home />} />
         <Route path="/detail/:recipeId" element={<Detail />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/add" element={<Add />} />
+        <Route path="/add" element={<ProtectedRoute><Add /></ProtectedRoute>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </>
-  )
-}
+    </AuthProvider>
+  );
+};
 
 export default App;
-
