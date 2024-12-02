@@ -1,135 +1,73 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import "../style/addpage.css";
 import Navbar from "../components/navbar";
-import imagePlaceholder from '../assets/addpic.svg';
+import "../style/addpage.css";
+import axios from "axios";
 
 const Add = () => {
   const [recipeName, setRecipeName] = useState("");
-  const [Content, setContent] = useState("");
+  const [content, setContent] = useState("");
   const [ingredients, setIngredients] = useState([{ name: '', optional: false, unit: '', quantity: '', method: '' }]);
+  const [image, setImage] = useState(null);
 
-  const handleAddRecipe = () => {
-    console.log("Recipe Added:", { recipeName, Content });
-  };
+  const handleAddRecipe = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("name", recipeName);
+      formData.append("content", content);
+      formData.append("ingredients", JSON.stringify(ingredients));
+      if (image) {
+        formData.append("image", image);
+      }
 
-  const handleAddImage = () => {
-    console.log("Add Image Clicked");
+      await axios.post('/api/recipes', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      alert("Recipe added successfully!");
+    } catch (error) {
+      console.error("Error adding recipe:", error);
+      alert("Failed to add recipe.");
+    }
   };
 
   const handleAddIngredient = () => {
     setIngredients([...ingredients, { name: '', optional: false, unit: '', quantity: '', method: '' }]);
   };
 
-  const handleIngredientChange = (index, field, value) => {
-    const newIngredients = [...ingredients];
-    newIngredients[index][field] = value;
-    setIngredients(newIngredients);
-  };
-
   return (
     <div className="add-page">
       <Navbar currentPageLink="/add" />
-
-      <div className="add-content">
-        <div className="add-pic" onClick={handleAddImage}>
-        <button className="button">
-            <img src={imagePlaceholder} alt="Add Placeholder" className="placeholder-image" />
-          </button>
-        </div>
-        <div className="recipe-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Ingredients</th>
-                  <th>Optional</th>
-                  <th>Unit</th>
-                  <th>Quantity</th>
-                  <th>Method</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ingredients.map((ingredient, index) => (
-                  <tr key={index}>
-                    <td>
-                      <input
-                        type="text"
-                        value={ingredient.name}
-                        onChange={(e) => handleIngredientChange(index, 'name', e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={ingredient.optional}
-                        onChange={(e) => handleIngredientChange(index, 'optional', e.target.checked)}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={ingredient.unit}
-                        onChange={(e) => handleIngredientChange(index, 'unit', e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        value={ingredient.quantity}
-                        onChange={(e) => handleIngredientChange(index, 'quantity', e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={ingredient.method}
-                        onChange={(e) => handleIngredientChange(index, 'method', e.target.value)}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <button onClick={handleAddIngredient} className="add-ingredient-button">
-              Add Ingredient
-            </button>
-          </div>
+      <div className="form-group">
+        <label htmlFor="image">Upload Image:</label>
+        <input
+          type="file"
+          id="image"
+          onChange={(e) => setImage(e.target.files[0])}
+        />
       </div>
-        <div className="form-group">
-          <button className="button">
-            Appetizers
-          </button>
-          <button className="button">
-            Main Courses
-          </button>
-          <button className="button">
-            Desserts
-          </button>
-          <button className="button">
-            Beverages
-          </button>
-          <label htmlFor="recipeName">Recipe Name:</label>
-          <input
-            type="text"
-            id="recipeName"
-            value={recipeName}
-            onChange={(e) => setRecipeName(e.target.value)}
-            placeholder="Enter the text..."
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="Content">Content:</label>
-          <textarea
-            id="Content"
-            value={Content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Enter the text..."
-          />
-        </div>
-        <Link to="/detail" className="add-button" onClick={handleAddRecipe}>
-        Complete
-      </Link>
-
+      <div className="form-group">
+        <label htmlFor="recipeName">Recipe Name:</label>
+        <input
+          type="text"
+          id="recipeName"
+          value={recipeName}
+          onChange={(e) => setRecipeName(e.target.value)}
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="content">Content:</label>
+        <textarea
+          id="content"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+        />
+      </div>
+      <div>
+        <button onClick={handleAddIngredient}>Add Ingredient</button>
+      </div>
+      <button onClick={handleAddRecipe}>Submit</button>
     </div>
   );
 };

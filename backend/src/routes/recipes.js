@@ -25,6 +25,7 @@ router.post('/recipes', auth, upload.single('image'), async (req, res) => {
 
 // Get all recipes
 router.get('/recipes', async (req, res) => {
+  console.log("GET /api/recipes was called");
   try {
     const [recipes] = await db.query('SELECT * FROM recipes');
     res.json(recipes);

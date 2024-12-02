@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios'; // 引入axios用于发送HTTP请求
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -10,9 +11,11 @@ const RegisterForm = () => {
     city: '',
     address: '',
     postalcode: '',
+    password: '', // 新增密码字段
   });
 
   const [submittedData, setSubmittedData] = useState(null);
+  const [error, setError] = useState(null); // 存储错误信息
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -22,19 +25,37 @@ const RegisterForm = () => {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    setSubmittedData(formData);
-    setFormData({
-      name: '',
-      email: '',
-      phonenumber: '',
-      country: 'US',
-      state: '',
-      city: '',
-      address: '',
-      postalcode: '',
-    });
+    setError(null); // 提交时清除之前的错误
+    try {
+      const response = await axios.post('/api/users', {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phonenumber,
+        password: formData.password,
+        address: `${formData.address}, ${formData.city}, ${formData.state}, ${formData.country}`,
+        postalCode: formData.postalcode,
+      });
+
+      // 设置返回的数据
+      setSubmittedData(response.data);
+      // 清空表单
+      setFormData({
+        name: '',
+        email: '',
+        phonenumber: '',
+        country: 'US',
+        state: '',
+        city: '',
+        address: '',
+        postalcode: '',
+        password: '', // 清空密码
+      });
+    } catch (err) {
+      console.error(err);
+      setError('Failed to register. Please try again later.');
+    }
   };
 
   return (
@@ -52,7 +73,6 @@ const RegisterForm = () => {
               className="w-full border p-3 rounded-lg"
               value={formData.name}
               onChange={handleChange}
-              
             />
           </div>
 
@@ -95,6 +115,18 @@ const RegisterForm = () => {
                 onChange={handleChange}
               />
             </div>
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block font-medium">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className="w-96 border p-3 rounded-lg"
+              value={formData.password}
+              onChange={handleChange}
+            />
           </div>
 
           <div>
@@ -156,16 +188,20 @@ const RegisterForm = () => {
           </div>
         </form>
 
+        {error && (
+          <div className="mt-6 p-4 bg-red-200 border rounded-lg text-red-800">
+            {error}
+          </div>
+        )}
+
         {submittedData && (
           <div id="display-data" className="mt-6 p-4 bg-gray-200 border rounded-lg text-gray-800">
             <p><strong>Name:</strong> {submittedData.name}</p>
             <p><strong>Email Address:</strong> {submittedData.email}</p>
-            <p><strong>Phone Number:</strong> {submittedData.phonenumber}</p>
+            <p><strong>Phone Number:</strong> {submittedData.phone}</p>
             <p><strong>Country:</strong> {submittedData.country}</p>
-            <p><strong>State:</strong> {submittedData.state}</p>
-            <p><strong>City:</strong> {submittedData.city}</p>
             <p><strong>Address:</strong> {submittedData.address}</p>
-            <p><strong>ZIP / Postal Code:</strong> {submittedData.postalcode}</p>
+            <p><strong>ZIP / Postal Code:</strong> {submittedData.postalCode}</p>
           </div>
         )}
       </div>

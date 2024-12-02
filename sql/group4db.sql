@@ -26,9 +26,12 @@ CREATE TABLE users(
 	email VARCHAR(30),
 	phoneNum VARCHAR(30),
 	password VARCHAR(30),
+	address VARCHAR(255), -- 增加 address 字段
+	postalCode VARCHAR(30), -- 增加 postalCode 字段
 	avatarID VARCHAR(30),
 	FOREIGN KEY (avatarID) REFERENCES pictures(pictureID)
-	);
+);
+
 
 CREATE TABLE recipes(
 	recipeID VARCHAR(30) PRIMARY KEY,

@@ -1,52 +1,59 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import Navbar from "../components/navbar";
-import recipes from '../assets/constants/mockRecipe.json'; 
-import comments from '../assets/constants/mockComment.json'; 
+import axios from 'axios';
 import likeIcon from '../assets/like.svg';
 import commentIcon from '../assets/comment.svg';
 import '../style/detail.css';
 
-const images = import.meta.glob('../assets/*.png', { eager: true }); // 预加载图片
-
 const Detail = () => {
   const { recipeId } = useParams();
-  const recipe = recipes.find(r => r.id === parseInt(recipeId));
-  const recipeComments = comments.filter(c => c.recipeId === parseInt(recipeId));
+  const [recipe, setRecipe] = useState(null);
+  const [comments, setComments] = useState([]);
+
+  useEffect(() => {
+    const fetchRecipeData = async () => {
+      try {
+        const recipeResponse = await axios.get(`/api/recipes/${recipeId}`);
+        setRecipe(recipeResponse.data);
+
+        const commentsResponse = await axios.get(`/api/recipes/${recipeId}/comments`);
+        setComments(commentsResponse.data);
+      } catch (error) {
+        console.error("Error fetching recipe details:", error);
+      }
+    };
+
+    fetchRecipeData();
+  }, [recipeId]);
 
   if (!recipe) {
-    return <div>Recipe not found</div>;
+    return <div>Loading...</div>;
   }
 
-  // 获取匹配的图片路径
-  const imageSrc = images[`../assets/${recipe.image.split('/').pop()}`]?.default || recipe.image;
-
   return (
-    <div className="detail-container"> 
+    <div className="detail-container">
       <Navbar currentPageLink="/detail" />
       <div className="recipe-detail">
-        {/* 左侧布局 */}
         <div className="detail-left">
           <div className="detail-image-container">
-            <img src={imageSrc} alt={recipe.name} className="detail-image" />
+            <img src={recipe.image} alt={recipe.name} className="detail-image" />
           </div>
           <div className="detail-comments">
             <ul>
-              {recipeComments.map((comment) => (
-                <li key={comment.id} className="comment-item">
+              {comments.map((comment) => (
+                <li key={comment.commentID} className="comment-item">
                   <div className="comment-header">
-                    <span className="comment-username">User {comment.userId}</span>
-                    <span className="comment-date">{comment.date}</span>
+                    <span className="comment-username">User {comment.userID}</span>
+                    <span className="comment-date">{new Date(comment.commentDate).toLocaleString()}</span>
                   </div>
-                  <div className="comment-content">{comment.comment}</div>
+                  <div className="comment-content">{comment.content}</div>
                 </li>
               ))}
             </ul>
           </div>
         </div>
 
-        {/* 右侧布局 */}
         <div className="detail-right">
           <div className="detail-header-fixed">
             <div className="detail-header">
@@ -57,9 +64,8 @@ const Detail = () => {
               </div>
             </div>
             <div className="author-section">
-              {/* 使用 recipe.userId 作为作者链接 */}
-              <Link to={`/profile/${recipe.userId}`} className="recipe-author-link">
-                <p>By {recipe.author}</p>
+              <Link to={`/profile/${recipe.userID}`} className="recipe-author-link">
+                <p>By {recipe.author || "Unknown Author"}</p>
               </Link>
               <button className="follow-button">Follow</button>
             </div>
