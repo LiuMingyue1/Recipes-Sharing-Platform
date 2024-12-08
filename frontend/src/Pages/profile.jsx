@@ -44,7 +44,7 @@ const Profile = () => {
 
   return (
     <div className="profile-container-custom">
-      <Navbar currentPageLink={`/profile/${userId}`} />
+      <Navbar currentPageLink={`/profile/${userId}`} hideSearch={true} />
       <div className="profile-card-custom">
         <img
           src={profileData.avatarURL || "defaultAvatar.svg"}

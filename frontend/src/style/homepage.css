@@ -45,6 +45,11 @@
   font-weight: bold;
 }
 
+/* 激活状态保持加粗 */
+.category-button.active {
+  font-weight: bold;
+}
+
 /* 可滚动的卡片区域 */
 .home-container {
   margin-top: 140px; /* 留出固定 Navbar 和 Category Navigation 的空间 */

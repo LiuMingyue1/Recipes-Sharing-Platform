@@ -62,6 +62,96 @@ router.get('/recipes/search', async (req, res) => {
   }
 });
 
+// Get a recipe with ingredients and steps
+router.get('/recipes/:id/details', async (req, res) => {
+  try {
+    const recipeId = req.params.id;
+
+    // 获取食谱信息
+    const [recipe] = await db.query('SELECT * FROM recipes WHERE recipeID = ?', [recipeId]);
+    if (recipe.length === 0) {
+      return res.status(404).json({ message: 'Recipe not found' });
+    }
+
+    // 获取原料信息
+    const [ingredients] = await db.query(
+      `SELECT i.name, ri.quantity, ri.unit, ri.methods, ri.optional
+       FROM recipe_Ingredients ri
+       JOIN ingredients i ON ri.ingredientID = i.ingredientID
+       WHERE ri.recipeID = ?`,
+      [recipeId]
+    );
+
+    // 将数据返回
+    res.json({
+      ...recipe[0],
+      ingredients: ingredients.map((item) => ({
+        name: item.name,
+        quantity: item.quantity,
+        unit: item.unit,
+        methods: item.methods,
+        optional: item.optional === 1,
+      })),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Get a random recipe
+router.get('/recipes/random', async (req, res) => {
+  try {
+    const [recipes] = await db.query('SELECT * FROM recipes');
+    if (recipes.length === 0) {
+      return res.status(404).json({ message: 'No recipes available' });
+    }
+    const randomIndex = Math.floor(Math.random() * recipes.length);
+    console.log('Random Index:', randomIndex); 
+    console.log('Recipes Length:', recipes.length); 
+    res.json(recipes[randomIndex]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Check like status
+router.get('/recipes/:id/like-status', auth, async (req, res) => {
+  const recipeId = req.params.id;
+  const userId = req.userId;
+  console.log("Checking like status for recipeID:", recipeId, "and userID:", userId);
+
+
+  try {
+    const [likeStatus] = await db.query('SELECT * FROM likes WHERE recipeID = ? AND userID = ?', [recipeId, userId]);
+    res.json({ liked: likeStatus.length > 0 });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Get ingredients for a specific recipe
+router.get('/recipes/:id/ingredients', async (req, res) => {
+  const recipeId = req.params.id;
+
+  try {
+    const [ingredients] = await db.query(
+      `SELECT i.name, ri.quantity, ri.unit, ri.optional, ri.methods 
+       FROM recipe_Ingredients ri 
+       JOIN ingredients i ON ri.ingredientID = i.ingredientID 
+       WHERE ri.recipeID = ?`, 
+      [recipeId]
+    );
+    res.json(ingredients);
+  } catch (error) {
+    console.error("Error fetching ingredients:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
 // Get a specific recipe
 router.get('/recipes/:id', async (req, res) => {
   try {
@@ -115,24 +205,6 @@ router.delete('/recipes/:id', auth, async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-
-// Get a random recipe
-router.get('/recipes/random', async (req, res) => {
-  try {
-    const [recipes] = await db.query('SELECT * FROM recipes');
-    if (recipes.length === 0) {
-      return res.status(404).json({ message: 'No recipes available' });
-    }
-    const randomIndex = Math.floor(Math.random() * recipes.length);
-    console.log('Random Index:', randomIndex); 
-    console.log('Recipes Length:', recipes.length); 
-    res.json(recipes[randomIndex]);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
 
 
 export default router;

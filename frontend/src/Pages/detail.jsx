@@ -1,33 +1,58 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
 import axios from "axios";
 import likeIcon from "../assets/like.svg";
+import likedIcon from "../assets/liked.svg";
 import commentIcon from "../assets/comment.svg";
 import "../style/detail.css";
 
 const Detail = () => {
   const { recipeId } = useParams();
+  const navigate = useNavigate();
   const [recipe, setRecipe] = useState(null);
   const [comments, setComments] = useState([]);
   const [authorName, setAuthorName] = useState("");
+  const [isLiked, setIsLiked] = useState(false);
   const [error, setError] = useState(null);
+  const [showCommentModal, setShowCommentModal] = useState(false);
+  const [newComment, setNewComment] = useState("");
+  const [userName, setUserName] = useState("");
 
   useEffect(() => {
     const fetchRecipeData = async () => {
       try {
-        // 获取食谱详情
         const recipeResponse = await axios.get(`http://localhost:5000/api/recipes/${recipeId}`);
         const recipeData = recipeResponse.data;
         setRecipe(recipeData);
 
-        // 获取作者信息
         const userResponse = await axios.get(`http://localhost:5000/api/users/${recipeData.userID}`);
         setAuthorName(userResponse.data.name);
 
-        // 获取评论数据
         const commentsResponse = await axios.get(`http://localhost:5000/api/recipes/${recipeId}/comments`);
-        setComments(commentsResponse.data);
+        const commentData = await Promise.all(
+          commentsResponse.data.map(async (comment) => {
+            const userResponse = await axios.get(`/api/users/${comment.userID}`);
+            return { ...comment, username: userResponse.data.name };
+          })
+        );
+        setComments(commentData);
+
+        const ingredientsResponse = await axios.get(`http://localhost:5000/api/recipes/${recipeId}/ingredients`);
+        setRecipe((prevRecipe) => ({
+          ...prevRecipe,
+          ingredients: ingredientsResponse.data,
+        }));
+
+        const likeStatusResponse = await axios.get(`http://localhost:5000/api/recipes/${recipeId}/like-status`, {
+          headers: { "user-id": localStorage.getItem("userId") },
+        });
+        setIsLiked(likeStatusResponse.data.liked);
+
+        const currentUserResponse = await axios.get("/api/auth/check", {
+          headers: { "user-id": localStorage.getItem("userId") },
+        });
+        setUserName(currentUserResponse.data.name || "Unknown User");
       } catch (err) {
         console.error("Error fetching recipe details:", err);
         setError("Unable to fetch recipe details. Please try again later.");
@@ -36,6 +61,63 @@ const Detail = () => {
 
     fetchRecipeData();
   }, [recipeId]);
+
+  const handleLikeToggle = async () => {
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      if (isLiked) {
+        await axios.delete(`http://localhost:5000/api/recipes/${recipeId}/like`, {
+          headers: { "user-id": userId },
+        });
+      } else {
+        await axios.post(`http://localhost:5000/api/recipes/${recipeId}/like`, {}, {
+          headers: { "user-id": userId },
+        });
+      }
+      setIsLiked(!isLiked);
+    } catch (error) {
+      console.error("Error toggling like:", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
+
+  const handleCommentSubmit = async () => {
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      await axios.post(
+        `http://localhost:5000/api/recipes/${recipeId}/comments`,
+        { content: newComment },
+        { headers: { "user-id": userId } }
+      );
+      setComments([
+        ...comments,
+        {
+          commentID: Date.now().toString(),
+          userID: userId,
+          username: userName,
+          commentDate: new Date().toISOString(),
+          content: newComment,
+        },
+      ]);
+      setNewComment("");
+      setShowCommentModal(false);
+    } catch (error) {
+      console.error("Error submitting comment:", error);
+      alert("Failed to submit comment. Please try again.");
+    }
+  };
 
   if (error) {
     return <div className="error-message">{error}</div>;
@@ -47,7 +129,7 @@ const Detail = () => {
 
   return (
     <div className="detail-container">
-      <Navbar currentPageLink="/recipes" />
+      <Navbar currentPageLink="/recipes" hideSearch={true} />
       <div className="recipe-detail">
         <div className="detail-left">
           <div className="detail-image-container">
@@ -58,7 +140,7 @@ const Detail = () => {
               {comments.map((comment) => (
                 <li key={comment.commentID} className="comment-item">
                   <div className="comment-header">
-                    <span className="comment-username">User {comment.userID}</span>
+                    <span className="comment-username">{comment.username}</span>
                     <span className="comment-date">
                       {new Date(comment.commentDate).toLocaleString()}
                     </span>
@@ -75,38 +157,70 @@ const Detail = () => {
             <div className="detail-header">
               <h1>{recipe.name}</h1>
               <div className="detail-icons">
-                <img src={commentIcon} alt="Comment" className="icon" />
-                <img src={likeIcon} alt="Like" className="icon" />
+                <img
+                  src={isLiked ? likedIcon : likeIcon}
+                  alt={isLiked ? "Liked" : "Like"}
+                  className="icon"
+                  onClick={handleLikeToggle}
+                />
+                <img
+                  src={commentIcon}
+                  alt="Comment"
+                  className="icon"
+                  onClick={() => setShowCommentModal(true)}
+                />
               </div>
             </div>
             <div className="author-section">
               <Link to={`/profile/${recipe.userID}`} className="recipe-author-link">
                 <p>By {authorName || "Unknown Author"}</p>
               </Link>
-              <button className="follow-button">Follow</button>
             </div>
           </div>
           <div className="detail-scrollable">
             <hr />
             <h3 className="section-title">Ingredients:</h3>
             <ul>
-              {recipe.ingredients && recipe.ingredients.map((ingredient, index) => (
-                <li key={index}>{ingredient}</li>
-              ))}
+              {recipe.ingredients &&
+                recipe.ingredients.map((ingredient, index) => (
+                  <li key={index}>
+                    <strong>{ingredient.name}</strong> - {`${ingredient.quantity}${ingredient.unit}`}
+                    {ingredient.methods && <span> {ingredient.methods}</span>}
+                    {ingredient.optional ? <span> (Optional)</span> : null}
+                  </li>
+                ))}
             </ul>
             <hr />
             <h3 className="section-title">Steps:</h3>
             <ol>
-              {recipe.steps && recipe.steps.map((step, index) => (
-                <li key={index}>{step}</li>
-              ))}
+              {recipe.content
+                ? recipe.content.split(/(?:\d+\.\s)/).filter(Boolean).map((step, index) => (
+                    <li key={index}>{step.trim()}</li>
+                  ))
+                : <li>No steps available.</li>}
             </ol>
           </div>
+
         </div>
       </div>
+
+      {showCommentModal && (
+        <div className="comment-modal">
+          <div className="modal-content">
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Enter your comment..."
+            />
+            <div className="modal-actions">
+              <button onClick={handleCommentSubmit}>Submit</button>
+              <button onClick={() => setShowCommentModal(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default Detail;
-

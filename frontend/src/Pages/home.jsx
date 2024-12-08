@@ -6,19 +6,37 @@ import axios from "axios";
 
 const Home = () => {
   const [recipes, setRecipes] = useState([]);
+  const [filteredRecipes, setFilteredRecipes] = useState([]);
+  const [activeCategory, setActiveCategory] = useState("");
 
   const fetchRecipes = async () => {
     try {
       const response = await axios.get("http://localhost:5000/api/recipes");
       if (Array.isArray(response.data)) {
         setRecipes(response.data);
+        setFilteredRecipes(response.data); // 默认显示所有食谱
       } else {
         console.error("Unexpected data format:", response.data);
         setRecipes([]);
+        setFilteredRecipes([]);
       }
     } catch (error) {
       console.error("Error fetching recipes:", error);
       setRecipes([]);
+      setFilteredRecipes([]);
+    }
+  };
+
+  const handleCategoryFilter = (category) => {
+    if (category === activeCategory) {
+      // 如果再次点击已激活的类别，则复原显示所有食谱
+      setFilteredRecipes(recipes);
+      setActiveCategory("");
+    } else {
+      // 否则根据类别过滤食谱
+      const filtered = recipes.filter((recipe) => recipe.category === category);
+      setFilteredRecipes(filtered);
+      setActiveCategory(category);
     }
   };
 
@@ -34,13 +52,13 @@ const Home = () => {
         `http://localhost:5000/api/recipes/search?query=${query}`
       );
       if (Array.isArray(response.data)) {
-        setRecipes(response.data); // 更新搜索结果
+        setFilteredRecipes(response.data); // 更新搜索结果
       } else {
-        setRecipes([]);
+        setFilteredRecipes([]);
       }
     } catch (error) {
       console.error("Error searching recipes:", error);
-      setRecipes([]);
+      setFilteredRecipes([]);
     }
   };
 
@@ -55,15 +73,35 @@ const Home = () => {
       </div>
 
       <div className="category-navigation">
-        <button className="category-button">Appetizers</button>
-        <button className="category-button">Main Courses</button>
-        <button className="category-button">Desserts</button>
-        <button className="category-button">Beverages</button>
+        <button
+          className={`category-button ${activeCategory === "Appetizers" ? "active" : ""}`}
+          onClick={() => handleCategoryFilter("Appetizers")}
+        >
+          Appetizers
+        </button>
+        <button
+          className={`category-button ${activeCategory === "Main Courses" ? "active" : ""}`}
+          onClick={() => handleCategoryFilter("Main Courses")}
+        >
+          Main Courses
+        </button>
+        <button
+          className={`category-button ${activeCategory === "Desserts" ? "active" : ""}`}
+          onClick={() => handleCategoryFilter("Desserts")}
+        >
+          Desserts
+        </button>
+        <button
+          className={`category-button ${activeCategory === "Beverages" ? "active" : ""}`}
+          onClick={() => handleCategoryFilter("Beverages")}
+        >
+          Beverages
+        </button>
       </div>
 
       <div className="home-container">
         <div className="recipe-list">
-          {recipes.map((recipe) => (
+          {filteredRecipes.map((recipe) => (
             <RecipeCard
               key={recipe.recipeID}
               id={recipe.recipeID}
