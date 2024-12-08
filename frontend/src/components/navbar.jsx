@@ -9,40 +9,42 @@ import "../style/navbar.css";
 
 const Navbar = ({ currentPageLink, onSearch }) => {
   const { user } = useContext(AuthContext);
-  const [searchQuery, setSearchQuery] = useState(""); // 保存搜索关键字
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearchClick = () => {
     if (searchQuery.trim() !== "") {
-      onSearch(searchQuery); // 点击搜索图标时触发搜索
+      onSearch(searchQuery);
     }
   };
 
   const handleInputChange = (event) => {
     const query = event.target.value;
-    setSearchQuery(query); // 更新输入值
+    setSearchQuery(query);
     if (query.trim() === "") {
-      onSearch(""); // 如果输入为空，恢复默认状态
+      onSearch(""); 
     }
   };
 
   return (
-    <div className="navbar">
-      {/* 搜索框 */}
-      <div className="navbar-search">
-        <input
-          type="text"
-          placeholder="Search Recipes or Ingredients"
-          className="search-input"
-          value={searchQuery}
-          onChange={handleInputChange} // 监听输入变化
-        />
-        <img
-          src={navsearchIcon}
-          alt="Search Icon"
-          className="search-icon"
-          onClick={handleSearchClick} // 点击图标时触发搜索
-        />
-      </div>
+    <div className={`navbar ${currentPageLink !== "/home" ? "no-search" : ""}`}>
+      {/* 搜索框，仅在 Homepage 显示 */}
+      {currentPageLink === "/home" && (
+        <div className="navbar-search">
+          <input
+            type="text"
+            placeholder="Search Recipes or Ingredients"
+            className="search-input"
+            value={searchQuery}
+            onChange={handleInputChange}
+          />
+          <img
+            src={navsearchIcon}
+            alt="Search Icon"
+            className="search-icon"
+            onClick={handleSearchClick}
+          />
+        </div>
+      )}
 
       {/* 中间 LOGO 按钮 */}
       <div className="navbar-center">
@@ -68,4 +70,3 @@ const Navbar = ({ currentPageLink, onSearch }) => {
 };
 
 export default Navbar;
-
