@@ -1,45 +1,100 @@
-import React, { useContext, useState, useEffect } from "react";
-import { AuthContext } from "../contexts/AuthContext";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import Navbar from "../components/navbar";
 import RecipeCard from "../components/recipeCard";
+import "../style/profile.css";
 import axios from "axios";
 
 const Profile = () => {
-  const { user } = useContext(AuthContext);
+  const { userId } = useParams();
+  const [profileData, setProfileData] = useState(null);
   const [recipes, setRecipes] = useState([]);
   const [viewMode, setViewMode] = useState("publish");
 
   useEffect(() => {
-    const fetchRecipes = async () => {
+    if (!userId) {
+      console.error("No userId found in params");
+      return;
+    }
+
+    const fetchProfileData = async () => {
       try {
+        // Fetch user data
+        const userInfoResponse = await axios.get(`/api/users/${userId}`);
+        setProfileData(userInfoResponse.data);
+
+        // Fetch recipes data
         const endpoint =
           viewMode === "publish"
-            ? `/api/users/${user.userId}/my-recipes`
-            : `/api/users/${user.userId}/liked-recipes`;
-        const response = await axios.get(endpoint);
-        setRecipes(response.data);
-      } catch (err) {
-        console.error(err);
+            ? `/api/users/${userId}/my-recipes`
+            : `/api/users/${userId}/liked-recipes`;
+        const recipesResponse = await axios.get(endpoint);
+        setRecipes(recipesResponse.data);
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
       }
     };
 
-    fetchRecipes();
-  }, [viewMode, user]);
+    fetchProfileData();
+  }, [userId, viewMode]);
 
-  if (!user) return <div>Loading...</div>;
+  if (!profileData) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div>
-      <Navbar currentPageLink={`/profile/${user.userId}`} />
-      <h1>Welcome, {user.name}</h1>
-      <div>
-        <button onClick={() => setViewMode("publish")}>Published Recipes</button>
-        <button onClick={() => setViewMode("like")}>Liked Recipes</button>
+    <div className="profile-container-custom">
+      <Navbar currentPageLink={`/profile/${userId}`} />
+      <div className="profile-card-custom">
+        <img
+          src={profileData.avatarURL || "defaultAvatar.svg"}
+          alt={profileData.name}
+          className="profile-avatar-custom"
+        />
+        <h2 className="profile-name-custom">{profileData.name}</h2>
+        <div className="profile-info-group-custom">
+          <div className="profile-info-item-custom">
+            <span>ID:</span> {profileData.userID}
+          </div>
+          <div className="profile-info-item-custom">
+            <span>Age:</span> {profileData.age || "N/A"}
+          </div>
+          <div className="profile-info-item-custom">
+            <span>Email:</span> {profileData.email}
+          </div>
+        </div>
       </div>
-      <div>
-        {recipes.map((recipe) => (
-          <RecipeCard key={recipe.recipeID} {...recipe} />
-        ))}
+
+      <div className="button-wrapper">
+        <div className="button-group-custom">
+          <button
+            className={`toggle-button-custom ${viewMode === "publish" ? "active" : ""}`}
+            onClick={() => setViewMode("publish")}
+          >
+            Published Recipes
+          </button>
+          <button
+            className={`toggle-button-custom ${viewMode === "like" ? "active" : ""}`}
+            onClick={() => setViewMode("like")}
+          >
+            Liked Recipes
+          </button>
+        </div>
+      </div>
+
+      <div className="profile-recipe-section">
+        <div className="profile-recipe-list-custom">
+          {recipes.map((recipe) => (
+            <RecipeCard
+              key={recipe.recipeID}
+              id={recipe.recipeID}
+              image={recipe.pictureID}
+              name={recipe.name}
+              author={recipe.author}
+              userId={recipe.userID}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

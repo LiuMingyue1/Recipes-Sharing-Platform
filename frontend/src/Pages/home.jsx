@@ -1,39 +1,60 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/navbar";
-import RecipeCard from '../components/recipeCard';
+import RecipeCard from "../components/recipeCard";
 import "../style/homepage.css";
-import axios from 'axios';
+import axios from "axios";
 
 const Home = () => {
-  const [recipes, setRecipes] = useState([]); // 确保初始值为数组
+  const [recipes, setRecipes] = useState([]);
+
+  const fetchRecipes = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/recipes");
+      if (Array.isArray(response.data)) {
+        setRecipes(response.data);
+      } else {
+        console.error("Unexpected data format:", response.data);
+        setRecipes([]);
+      }
+    } catch (error) {
+      console.error("Error fetching recipes:", error);
+      setRecipes([]);
+    }
+  };
+
+  const handleSearch = async (query) => {
+    if (query.trim() === "") {
+      // 如果搜索关键字为空，加载所有菜谱
+      fetchRecipes();
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/recipes/search?query=${query}`
+      );
+      if (Array.isArray(response.data)) {
+        setRecipes(response.data); // 更新搜索结果
+      } else {
+        setRecipes([]);
+      }
+    } catch (error) {
+      console.error("Error searching recipes:", error);
+      setRecipes([]);
+    }
+  };
 
   useEffect(() => {
-    const fetchRecipes = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/recipes');
-        if (Array.isArray(response.data)) {
-          setRecipes(response.data); // 确保只设置数组
-        } else {
-          console.error("Unexpected data format:", response.data);
-          setRecipes([]); // 设置为空数组
-        }
-      } catch (error) {
-        console.error("Error fetching recipes:", error);
-        setRecipes([]); // 错误时设置为空数组
-      }
-    };
-
     fetchRecipes();
   }, []);
 
   return (
     <div className="home-wrapper">
       <div className="homenavbar">
-        <Navbar currentPageLink="/home" />
+        <Navbar currentPageLink="/home" onSearch={handleSearch} />
       </div>
-      
+
       <div className="category-navigation">
-        <button className="category-button">Most Popular</button>
         <button className="category-button">Appetizers</button>
         <button className="category-button">Main Courses</button>
         <button className="category-button">Desserts</button>
@@ -42,8 +63,8 @@ const Home = () => {
 
       <div className="home-container">
         <div className="recipe-list">
-          {recipes.map(recipe => (
-            <RecipeCard 
+          {recipes.map((recipe) => (
+            <RecipeCard
               key={recipe.recipeID}
               id={recipe.recipeID}
               image={recipe.pictureID}
@@ -59,4 +80,3 @@ const Home = () => {
 };
 
 export default Home;
-

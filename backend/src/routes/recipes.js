@@ -35,6 +35,33 @@ router.get('/recipes', async (req, res) => {
   }
 });
 
+router.get('/recipes/test', (req, res) => {
+  console.log("Test route matched");
+  res.json({ message: 'Test route works!' });
+});
+
+// 搜索 API
+router.get('/recipes/search', async (req, res) => {
+  console.log("Search API hit with query:", req.query.query); 
+  const query = req.query.query || "";
+
+  try {
+    const [results] = await db.query(
+      `SELECT DISTINCT recipes.* 
+       FROM recipes 
+       LEFT JOIN recipe_Ingredients ON recipes.recipeID = recipe_Ingredients.recipeID 
+       LEFT JOIN ingredients ON recipe_Ingredients.ingredientID = ingredients.ingredientID 
+       WHERE recipes.name LIKE ? OR ingredients.name LIKE ?`,
+      [`%${query}%`, `%${query}%`]
+    );
+
+    res.json(results);
+  } catch (error) {
+    console.error("Error searching recipes:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 // Get a specific recipe
 router.get('/recipes/:id', async (req, res) => {
   try {
@@ -105,5 +132,7 @@ router.get('/recipes/random', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+
 
 export default router;
