@@ -41,6 +41,15 @@
     justify-content: center;
   }
 
+  .selected-button {
+    /* background-color: #2980b9;  */
+    color: rgb(0, 0, 0); 
+    border: 2px solid #1c5d8a; 
+    font-weight: bold;
+    transform: scale(1.2); 
+    transition: all 0.3s ease; 
+  }
+
   .form-group input,
   .form-group textarea {
     width: 1116px;
@@ -137,7 +146,7 @@
     margin-top: 20px;
     padding: 10px 20px;
     background-color: #E0E8A3;
-    color: #fff;
+    color: #000000;
     border: none;
     cursor: pointer;
     border-radius: 5px;
@@ -149,5 +158,13 @@
   
   .add-ingredient-button:hover {
     background-color: #ced78b;
+  }
+  
+  .image-preview img {
+    max-width: 400px;
+    height: 350px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
   }
   

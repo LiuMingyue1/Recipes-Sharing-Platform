@@ -19,6 +19,8 @@ const AuthProvider = ({ children }) => {
   const login = (userData) => {
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData)); // 存储到 localStorage
+    localStorage.setItem("userId", userData.userId); // 保存用户ID
+    localStorage.setItem("authToken", userData.token); // 保存认证令牌
   };
 
   // 登出方法

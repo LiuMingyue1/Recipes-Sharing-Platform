@@ -76,12 +76,17 @@ router.post('/users/login', async (req, res) => {
     if (users.length === 0) {
       return res.status(401).json({ message: 'Wrong email or password' });
     }
-    res.json({ userId: users[0].userID });
+
+    const userId = users[0].userID; // 获取用户ID
+
+    // 返回用户ID
+    res.json({ userId }); // 仅返回用户ID
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 // Edit avatar
 router.put('/users/avatar', auth, upload.single('avatar'), async (req, res) => {

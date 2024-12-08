@@ -7,21 +7,53 @@ const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
 
 // Create a new recipe
-router.post('/recipes', auth, upload.single('image'), async (req, res) => {
-  const { title, ingredients, steps } = req.body;
+router.post("/recipes", auth, upload.single("image"), async (req, res) => {
+  const { name, content, category } = req.body;
+  const userId = req.userId; // 从认证中获取 userID
   const imagePath = req.file ? req.file.path : null;
 
+  if (!name || !content || !category || !userId) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
+
   try {
-    const [result] = await db.query(
-      'INSERT INTO recipes (recipeID, pictureID, userID, name, content) VALUES (?, ?, ?, ?, ?)',
-      [Date.now().toString(), imagePath, req.userId, title, steps]
+    const recipeID = Date.now().toString();
+    let pictureID = null;
+
+    // 插入图片记录到 pictures 表
+    if (imagePath) {
+      pictureID = `pic-${Date.now()}`;
+      await db.query("INSERT INTO pictures (pictureID, url) VALUES (?, ?)", [
+        pictureID,
+        imagePath,
+      ]);
+    }
+
+    // 插入食谱记录到 recipes 表
+    await db.query(
+      "INSERT INTO recipes (recipeID, pictureID, userID, name, content, category) VALUES (?, ?, ?, ?, ?, ?)",
+      [recipeID, pictureID, userId, name, content, category]
     );
-    res.status(201).json({ recipeID: result.insertId, title, ingredients, steps, pictureID: imagePath });
+
+    res.status(201).json({
+      message: "Recipe added successfully",
+      recipeID,
+      userId,
+      name,
+      content,
+      category,
+      pictureID,
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error adding recipe:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
   }
 });
+
+
+
+
+
 
 // Get all recipes
 router.get('/recipes', async (req, res) => {
