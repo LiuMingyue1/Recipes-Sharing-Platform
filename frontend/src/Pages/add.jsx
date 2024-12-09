@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
 import "../style/addpage.css";
 import axios from "axios";
+// import recipeID from "../../../backend/src/routes/recipes";
 
 const Add = () => {
   const [recipeName, setRecipeName] = useState("");
@@ -15,10 +16,10 @@ const Add = () => {
 
   const handleAddRecipe = async () => {
     try {
-      const userId = localStorage.getItem("userId"); // 从 localStorage 获取 userId
+      const userId = localStorage.getItem("userId");
       if (!userId) {
         alert("You must be logged in to add a recipe.");
-        return navigate("/login"); // 未登录跳转到登录页面
+        return navigate("/login");
       }
   
       const formData = new FormData();
@@ -30,12 +31,16 @@ const Add = () => {
         formData.append("image", image);
       }
   
-      await axios.post("/api/recipes", formData, {
+      const response = await axios.post("/api/recipes", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          "user-id": userId, // 直接使用 userId 代替 authToken
+          "user-id": userId,
         },
       });
+  
+      const { pictureID, recipeID } = response.data; // 获取后端返回的 pictureID 和 recipeID
+      console.log("Picture ID:", pictureID); // 在控制台打印 pictureID
+      console.log("Recipe ID:", recipeID); // 在控制台打印 recipeID
   
       alert("Recipe added successfully!");
       navigate("/home");
@@ -44,6 +49,8 @@ const Add = () => {
       alert(`Failed to add recipe. ${error.response?.data?.message || error.message}`);
     }
   };
+  
+  
   
 
   const handleImageChange = (e) => {

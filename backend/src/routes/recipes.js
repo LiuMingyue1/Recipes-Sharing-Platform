@@ -1,16 +1,30 @@
-import express from 'express';
-import db from '../db.js'; // Database connection
-import multer from 'multer';
-import auth from '../middlewares/auth.js'; // Authentication middleware
+import express from "express";
+import path from "path";
+import multer from "multer";
+import db from "../db.js"; // Database connection
+import auth from "../middlewares/auth.js"; // Authentication middleware
 
 const router = express.Router();
-const upload = multer({ dest: 'uploads/' });
 
-// Create a new recipe
+// 自定义存储配置
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // 指定存储目录
+  },
+  filename: (req, file, cb) => {
+    const pictureID = `pic-${Date.now()}`; // 使用自定义命名规则
+    const fileExtension = path.extname(file.originalname); // 获取文件扩展名
+    cb(null, `${pictureID}${fileExtension}`); // 设置文件名为 pictureID+扩展名
+  },
+});
+
+const upload = multer({ storage });
+
+// 创建新食谱
 router.post("/recipes", auth, upload.single("image"), async (req, res) => {
   const { name, content, category } = req.body;
   const userId = req.userId; // 从认证中获取 userID
-  const imagePath = req.file ? req.file.path : null;
+  const imagePath = req.file ? req.file.path : null; // 获取图片路径
 
   if (!name || !content || !category || !userId) {
     return res.status(400).json({ message: "Missing required fields" });
@@ -20,9 +34,11 @@ router.post("/recipes", auth, upload.single("image"), async (req, res) => {
     const recipeID = Date.now().toString();
     let pictureID = null;
 
-    // 插入图片记录到 pictures 表
     if (imagePath) {
-      pictureID = `pic-${Date.now()}`;
+      // 从文件名中提取 pictureID（不包括扩展名）
+      pictureID = path.basename(req.file.filename, path.extname(req.file.filename));
+
+      // 插入图片记录到数据库
       await db.query("INSERT INTO pictures (pictureID, url) VALUES (?, ?)", [
         pictureID,
         imagePath,
@@ -50,193 +66,51 @@ router.post("/recipes", auth, upload.single("image"), async (req, res) => {
   }
 });
 
-
-
-
-
-
-// Get all recipes
-router.get('/recipes', async (req, res) => {
-  console.log("GET /api/recipes was called");
+// 获取所有食谱
+router.get("/recipes", async (req, res) => {
   try {
-    const [recipes] = await db.query('SELECT * FROM recipes');
+    const [recipes] = await db.query("SELECT * FROM recipes");
     res.json(recipes);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-router.get('/recipes/test', (req, res) => {
-  console.log("Test route matched");
-  res.json({ message: 'Test route works!' });
-});
-
-// 搜索 API
-router.get('/recipes/search', async (req, res) => {
-  console.log("Search API hit with query:", req.query.query); 
-  const query = req.query.query || "";
-
-  try {
-    const [results] = await db.query(
-      `SELECT DISTINCT recipes.* 
-       FROM recipes 
-       LEFT JOIN recipe_Ingredients ON recipes.recipeID = recipe_Ingredients.recipeID 
-       LEFT JOIN ingredients ON recipe_Ingredients.ingredientID = ingredients.ingredientID 
-       WHERE recipes.name LIKE ? OR ingredients.name LIKE ?`,
-      [`%${query}%`, `%${query}%`]
-    );
-
-    res.json(results);
-  } catch (error) {
-    console.error("Error searching recipes:", error);
+    console.error("Error fetching recipes:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
-// Get a recipe with ingredients and steps
-router.get('/recipes/:id/details', async (req, res) => {
+// 获取随机食谱
+router.get("/recipes/random", async (req, res) => {
   try {
-    const recipeId = req.params.id;
-
-    // 获取食谱信息
-    const [recipe] = await db.query('SELECT * FROM recipes WHERE recipeID = ?', [recipeId]);
-    if (recipe.length === 0) {
-      return res.status(404).json({ message: 'Recipe not found' });
-    }
-
-    // 获取原料信息
-    const [ingredients] = await db.query(
-      `SELECT i.name, ri.quantity, ri.unit, ri.methods, ri.optional
-       FROM recipe_Ingredients ri
-       JOIN ingredients i ON ri.ingredientID = i.ingredientID
-       WHERE ri.recipeID = ?`,
-      [recipeId]
-    );
-
-    // 将数据返回
-    res.json({
-      ...recipe[0],
-      ingredients: ingredients.map((item) => ({
-        name: item.name,
-        quantity: item.quantity,
-        unit: item.unit,
-        methods: item.methods,
-        optional: item.optional === 1,
-      })),
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-// Get a random recipe
-router.get('/recipes/random', async (req, res) => {
-  try {
-    const [recipes] = await db.query('SELECT * FROM recipes');
+    const [recipes] = await db.query("SELECT * FROM recipes");
     if (recipes.length === 0) {
-      return res.status(404).json({ message: 'No recipes available' });
+      return res.status(404).json({ message: "No recipes available" });
     }
     const randomIndex = Math.floor(Math.random() * recipes.length);
-    console.log('Random Index:', randomIndex); 
-    console.log('Recipes Length:', recipes.length); 
     res.json(recipes[randomIndex]);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-// Check like status
-router.get('/recipes/:id/like-status', auth, async (req, res) => {
-  const recipeId = req.params.id;
-  const userId = req.userId;
-  console.log("Checking like status for recipeID:", recipeId, "and userID:", userId);
-
-
-  try {
-    const [likeStatus] = await db.query('SELECT * FROM likes WHERE recipeID = ? AND userID = ?', [recipeId, userId]);
-    res.json({ liked: likeStatus.length > 0 });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-// Get ingredients for a specific recipe
-router.get('/recipes/:id/ingredients', async (req, res) => {
-  const recipeId = req.params.id;
-
-  try {
-    const [ingredients] = await db.query(
-      `SELECT i.name, ri.quantity, ri.unit, ri.optional, ri.methods 
-       FROM recipe_Ingredients ri 
-       JOIN ingredients i ON ri.ingredientID = i.ingredientID 
-       WHERE ri.recipeID = ?`, 
-      [recipeId]
-    );
-    res.json(ingredients);
-  } catch (error) {
-    console.error("Error fetching ingredients:", error);
+    console.error("Error fetching random recipe:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
-
-// Get a specific recipe
-router.get('/recipes/:id', async (req, res) => {
+// 删除食谱
+router.delete("/recipes/:id", auth, async (req, res) => {
   try {
-    const [recipes] = await db.query('SELECT * FROM recipes WHERE recipeID = ?', [req.params.id]);
+    const [recipes] = await db.query("SELECT * FROM recipes WHERE recipeID = ?", [
+      req.params.id,
+    ]);
     if (recipes.length === 0) {
-      return res.status(404).json({ message: 'Recipe not found' });
-    }
-    res.json(recipes[0]);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-// Update a recipe
-router.put('/recipes/:id', auth, async (req, res) => {
-  const { title, ingredients, steps } = req.body;
-
-  try {
-    const [recipes] = await db.query('SELECT * FROM recipes WHERE recipeID = ?', [req.params.id]);
-    if (recipes.length === 0) {
-      return res.status(404).json({ message: 'Recipe not found' });
+      return res.status(404).json({ message: "Recipe not found" });
     }
     if (recipes[0].userID !== req.userId) {
-      return res.status(403).json({ message: 'Permission denied' });
+      return res.status(403).json({ message: "Permission denied" });
     }
 
-    await db.query('UPDATE recipes SET name = ?, content = ? WHERE recipeID = ?', [title, steps, req.params.id]);
-    res.json({ recipeID: req.params.id, title, ingredients, steps });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-// Delete a recipe
-router.delete('/recipes/:id', auth, async (req, res) => {
-  try {
-    const [recipes] = await db.query('SELECT * FROM recipes WHERE recipeID = ?', [req.params.id]);
-    if (recipes.length === 0) {
-      return res.status(404).json({ message: 'Recipe not found' });
-    }
-    if (recipes[0].userID !== req.userId) {
-      return res.status(403).json({ message: 'Permission denied' });
-    }
-
-    await db.query('DELETE FROM recipes WHERE recipeID = ?', [req.params.id]);
+    await db.query("DELETE FROM recipes WHERE recipeID = ?", [req.params.id]);
     res.status(204).send();
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error deleting recipe:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
-
 
 export default router;
