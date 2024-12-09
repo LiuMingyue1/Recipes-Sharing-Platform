@@ -1,20 +1,63 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import "../style/addpage.css";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
-import imagePlaceholder from '../assets/addpic.svg';
+import "../style/addpage.css";
+import axios from "axios";
 
 const Add = () => {
   const [recipeName, setRecipeName] = useState("");
-  const [Content, setContent] = useState("");
+  const [content, setContent] = useState("");
   const [ingredients, setIngredients] = useState([{ name: '', optional: false, unit: '', quantity: '', method: '' }]);
+  const [image, setImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null); // State for preview image
+  const [category, setCategory] = useState("");
+  const navigate = useNavigate(); // Use navigate hook for redirection
 
-  const handleAddRecipe = () => {
-    console.log("Recipe Added:", { recipeName, Content });
+  const handleAddRecipe = async () => {
+    try {
+      const userId = localStorage.getItem("userId"); // 从 localStorage 获取 userId
+      if (!userId) {
+        alert("You must be logged in to add a recipe.");
+        return navigate("/login"); // 未登录跳转到登录页面
+      }
+  
+      const formData = new FormData();
+      formData.append("name", recipeName);
+      formData.append("content", content);
+      formData.append("ingredients", JSON.stringify(ingredients));
+      formData.append("category", category);
+      if (image) {
+        formData.append("image", image);
+      }
+  
+      await axios.post("/api/recipes", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "user-id": userId, // 直接使用 userId 代替 authToken
+        },
+      });
+  
+      alert("Recipe added successfully!");
+      navigate("/home");
+    } catch (error) {
+      console.error("Error adding recipe:", error);
+      alert(`Failed to add recipe. ${error.response?.data?.message || error.message}`);
+    }
   };
+  
 
-  const handleAddImage = () => {
-    console.log("Add Image Clicked");
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+
+    // Use FileReader to generate a preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewImage(reader.result);
+    };
+    if (file) {
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleAddIngredient = () => {
@@ -27,109 +70,121 @@ const Add = () => {
     setIngredients(newIngredients);
   };
 
+  const handleCategorySelection = (selectedCategory) => {
+    setCategory(selectedCategory);
+  };
+
   return (
     <div className="add-page">
       <Navbar currentPageLink="/add" />
 
       <div className="add-content">
-        <div className="add-pic" onClick={handleAddImage}>
-        <button className="button">
-            <img src={imagePlaceholder} alt="Add Placeholder" className="placeholder-image" />
-          </button>
+        <div className="add-pic">
+          <label className="image-upload-label">
+            Click to upload an image
+            <input
+              type="file"
+              id="image"
+              onChange={handleImageChange} // Update image change handler
+              className="image-upload"
+              style={{ display: 'none' }}
+            />
+          </label>
+          {previewImage && (
+            <div className="image-preview">
+              <img src={previewImage} alt="Preview" />
+            </div>
+          )}
         </div>
         <div className="recipe-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Ingredients</th>
-                  <th>Optional</th>
-                  <th>Unit</th>
-                  <th>Quantity</th>
-                  <th>Method</th>
+          <table>
+            <thead>
+              <tr>
+                <th>Ingredients</th>
+                <th>Optional</th>
+                <th>Unit</th>
+                <th>Quantity</th>
+                <th>Method</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ingredients.map((ingredient, index) => (
+                <tr key={index}>
+                  <td>
+                    <input
+                      type="text"
+                      value={ingredient.name}
+                      onChange={(e) => handleIngredientChange(index, 'name', e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={ingredient.optional}
+                      onChange={(e) => handleIngredientChange(index, 'optional', e.target.checked)}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={ingredient.unit}
+                      onChange={(e) => handleIngredientChange(index, 'unit', e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      value={ingredient.quantity}
+                      onChange={(e) => handleIngredientChange(index, 'quantity', e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={ingredient.method}
+                      onChange={(e) => handleIngredientChange(index, 'method', e.target.value)}
+                    />
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {ingredients.map((ingredient, index) => (
-                  <tr key={index}>
-                    <td>
-                      <input
-                        type="text"
-                        value={ingredient.name}
-                        onChange={(e) => handleIngredientChange(index, 'name', e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={ingredient.optional}
-                        onChange={(e) => handleIngredientChange(index, 'optional', e.target.checked)}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={ingredient.unit}
-                        onChange={(e) => handleIngredientChange(index, 'unit', e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        value={ingredient.quantity}
-                        onChange={(e) => handleIngredientChange(index, 'quantity', e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={ingredient.method}
-                        onChange={(e) => handleIngredientChange(index, 'method', e.target.value)}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <button onClick={handleAddIngredient} className="add-ingredient-button">
-              Add Ingredient
-            </button>
-          </div>
+              ))}
+            </tbody>
+          </table>
+          <button onClick={handleAddIngredient} className="add-ingredient-button">
+            Add Ingredient
+          </button>
+        </div>
       </div>
-        <div className="form-group">
-          <button className="button">
-            Appetizers
+      <div className="form-group">
+        {['Appetizers', 'Main Courses', 'Desserts', 'Beverages'].map((cat) => (
+          <button
+            key={cat}
+            className={`button ${category === cat ? 'selected-button' : ''}`}
+            onClick={() => handleCategorySelection(cat)}
+          >
+            {cat}
           </button>
-          <button className="button">
-            Main Courses
-          </button>
-          <button className="button">
-            Desserts
-          </button>
-          <button className="button">
-            Beverages
-          </button>
-          <label htmlFor="recipeName">Recipe Name:</label>
-          <input
-            type="text"
-            id="recipeName"
-            value={recipeName}
-            onChange={(e) => setRecipeName(e.target.value)}
-            placeholder="Enter the text..."
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="Content">Content:</label>
-          <textarea
-            id="Content"
-            value={Content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Enter the text..."
-          />
-        </div>
-        <Link to="/detail" className="add-button" onClick={handleAddRecipe}>
+        ))}
+        <label htmlFor="recipeName">Recipe Name:</label>
+        <input
+          type="text"
+          id="recipeName"
+          value={recipeName}
+          onChange={(e) => setRecipeName(e.target.value)}
+          placeholder="Enter the text..."
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="content">Content:</label>
+        <textarea
+          id="content"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Enter the text..."
+        />
+      </div>
+      <button className="add-button" onClick={handleAddRecipe}>
         Complete
-      </Link>
-
+      </button>
     </div>
   );
 };

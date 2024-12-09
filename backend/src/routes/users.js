@@ -76,12 +76,17 @@ router.post('/users/login', async (req, res) => {
     if (users.length === 0) {
       return res.status(401).json({ message: 'Wrong email or password' });
     }
-    res.json({ userId: users[0].userID });
+
+    const userId = users[0].userID; // 获取用户ID
+
+    // 返回用户ID
+    res.json({ userId }); // 仅返回用户ID
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 // Edit avatar
 router.put('/users/avatar', auth, upload.single('avatar'), async (req, res) => {
@@ -103,15 +108,14 @@ router.put('/users/avatar', auth, upload.single('avatar'), async (req, res) => {
 });
 
 // Get liked recipes
-router.get('/users/liked-recipes', auth, async (req, res) => {
-  const userId = req.userId;
-
+router.get('/users/:userId/liked-recipes', async (req, res) => {
   try {
-    const [likedRecipes] = await db.query(`
-      SELECT recipes.* FROM likes
-      JOIN recipes ON likes.recipeID = recipes.recipeID
-      WHERE likes.userID = ?`, [userId]);
-
+    const [likedRecipes] = await db.query(
+      `SELECT recipes.* FROM likes
+       JOIN recipes ON likes.recipeID = recipes.recipeID
+       WHERE likes.userID = ?`,
+      [req.params.userId]
+    );
     res.json(likedRecipes);
   } catch (error) {
     console.error(error);
@@ -164,5 +168,28 @@ router.get('/users/total-likes', auth, async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+router.get('/users/:userId', async (req, res) => {
+  try {
+    const userId = String(req.params.userId); // 确保 userId 是字符串
+    console.log("Received userId:", userId);
+
+    const [users] = await db.query('SELECT * FROM users WHERE userID = ?', [userId]);
+    console.log("Query result:", users);
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json(users[0]);
+  } catch (error) {
+    console.error("Error in GET /users/:userId:", error.message, error.stack);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+});
+
+
+
+
 
 export default router;

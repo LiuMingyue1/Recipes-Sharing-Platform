@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 import axios from "axios";
 
+
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,16 +14,20 @@ const LoginForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("/api/users/login", { email, password });
-      const userData = response.data;
-
-      login(userData); // 更新全局用户状态
-      navigate(`/profile/${userData.userId}`); // 跳转到用户的 Profile 页面
+      const response = await axios.post('/api/users/login', { email, password });
+      const { userId } = response.data;
+  
+      // 存储 userId
+      localStorage.setItem('userId', userId);
+  
+      alert('Login successful!');
+      navigate(`/profile/${userId}`); // 跳转到用户的 Profile 页面
     } catch (err) {
       console.error(err);
-      setError("Invalid email or password");
+      setError('Invalid email or password');
     }
   };
+  
 
   return (
     <div style={{ width: "100%", maxWidth: "400px", marginTop: "-50px" }}>

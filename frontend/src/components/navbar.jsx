@@ -1,25 +1,52 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import navsearchIcon from '../assets/navsearch.svg';
-import navaddIcon from '../assets/navadd.svg';
-import navuserIcon from '../assets/navuser.svg';
-import navlikeIcon from '../assets/navlike.svg';
-import "../style/navbar.css"; 
+import { AuthContext } from "../contexts/AuthContext";
+import navsearchIcon from "../assets/navsearch.svg";
+import navaddIcon from "../assets/navadd.svg";
+import navuserIcon from "../assets/navuser.svg";
+import navlikeIcon from "../assets/navlike.svg";
+import "../style/navbar.css";
 
-const Navbar = ({ currentPageLink }) => {
+const Navbar = ({ currentPageLink, onSearch }) => {
+  const { user } = useContext(AuthContext);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchClick = () => {
+    if (searchQuery.trim() !== "") {
+      onSearch(searchQuery);
+    }
+  };
+
+  const handleInputChange = (event) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    if (query.trim() === "") {
+      onSearch(""); 
+    }
+  };
+
   return (
-    <div className="navbar">
-      {/* 左侧搜索框 */}
-      <div className="navbar-search">
-        <input
-          type="text"
-          placeholder="Search Recipes or Ingredients"
-          className="search-input"
-        />
-         <img src={navsearchIcon} alt="Search Icon" className="search-icon" />
-      </div>
+    <div className={`navbar ${currentPageLink !== "/home" ? "no-search" : ""}`}>
+      {/* 搜索框，仅在 Homepage 显示 */}
+      {currentPageLink === "/home" && (
+        <div className="navbar-search">
+          <input
+            type="text"
+            placeholder="Search Recipes or Ingredients"
+            className="search-input"
+            value={searchQuery}
+            onChange={handleInputChange}
+          />
+          <img
+            src={navsearchIcon}
+            alt="Search Icon"
+            className="search-icon"
+            onClick={handleSearchClick}
+          />
+        </div>
+      )}
 
-      {/* 中间按钮文字 */}
+      {/* 中间 LOGO 按钮 */}
       <div className="navbar-center">
         <Link to="/home" className="navbar-logo-button">
           co-eater
@@ -31,7 +58,7 @@ const Navbar = ({ currentPageLink }) => {
         <Link to="/add">
           <img src={navaddIcon} alt="Add Icon" className="navbar-icon" />
         </Link>
-        <Link to="/login">
+        <Link to={user ? `/profile/${user.userId}` : "/login"}>
           <img src={navuserIcon} alt="User Icon" className="navbar-icon" />
         </Link>
         <Link to="/like">
@@ -40,6 +67,6 @@ const Navbar = ({ currentPageLink }) => {
       </div>
     </div>
   );
-}
+};
 
 export default Navbar;

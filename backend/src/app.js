@@ -5,6 +5,7 @@ import recipesRoutes from './routes/recipes.js';
 import usersRoutes from './routes/users.js'; 
 import commentsRoutes from './routes/comments.js';
 import likesRoutes from './routes/likes.js';
+import testRoutes from './routes/testRoutes.js';
 
 const app = express();
 
@@ -14,12 +15,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/', recipesRoutes); 
-app.use('/api/', usersRoutes); 
-app.use('/api/', commentsRoutes); // RESTful API 
-app.use('/api/', likesRoutes);  // RESTful API 
+app.use('/api', recipesRoutes); 
+app.use('/api', usersRoutes); 
+app.use('/api', commentsRoutes);
+app.use('/api', likesRoutes); 
+app.use('/api', testRoutes);
 
 
+app.use((req, res, next) => {
+  console.log(`Incoming request: ${req.method} ${req.originalUrl}`);
+  next();
+});
 
 // Default error handler
 app.use((err, req, res, next) => {
