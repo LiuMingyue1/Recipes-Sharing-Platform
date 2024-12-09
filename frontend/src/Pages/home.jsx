@@ -3,6 +3,7 @@ import Navbar from "../components/navbar";
 import RecipeCard from "../components/recipeCard";
 import "../style/homepage.css";
 import axios from "axios";
+import pic004 from "../assets/pic004.png";
 
 const Home = () => {
   const [recipes, setRecipes] = useState([]);
@@ -105,7 +106,8 @@ const Home = () => {
             <RecipeCard
               key={recipe.recipeID}
               id={recipe.recipeID}
-              image={recipe.pictureID}
+              // image={recipe.pictureID+'.png'}
+              image={'/src/assets/'+recipe.pictureID+'.jpg'}
               name={recipe.name}
               author={recipe.author || "Unknown Author"}
               userId={recipe.userID}

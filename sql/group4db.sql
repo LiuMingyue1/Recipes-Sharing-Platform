@@ -26,11 +26,6 @@ CREATE TABLE users(
 	email VARCHAR(30),
 	phoneNum VARCHAR(30),
 	password VARCHAR(30),
-<<<<<<< Updated upstream
-=======
-	address VARCHAR(255), 
-	postalCode VARCHAR(30), 
->>>>>>> Stashed changes
 	avatarID VARCHAR(30),
 	FOREIGN KEY (avatarID) REFERENCES pictures(pictureID)
 	);
@@ -86,12 +81,12 @@ CREATE TABLE likes(
 
 INSERT INTO pictures (pictureID, url, usage_info) 
 VALUES
-('defaultAvatar', 's3://6224-fa24-g4/a000.svg', 'Avatar'),
+('defaultAvatar', 'https://6224-fa24-g4.s3.us-east-1.amazonaws.com/a000.svg', 'Avatar'),
 ('defaultRecipe', 's3://6224-fa24-g4/r000.jpg', 'Recipes'),
 ('pic001', 's3://6224-fa24-g4/a001.jpg', 'Avatar'),
 ('pic002', 's3://6224-fa24-g4/r001.jpg', 'Recipes'),
 ('pic003', 's3://6224-fa24-g4/a002.png', 'Avatar'),
-('pic004', 's3://6224-fa24-g4/r002.jpg', 'Recipes'),
+('pic004', 'https://6224-fa24-g4.s3.us-east-1.amazonaws.com/r002.jpg', 'Recipes'),
 ('pic005', 's3://6224-fa24-g4/a003.jpg', 'Avatar'),
 ('pic006', 's3://6224-fa24-g4/r003.jpg', 'Recipes'),
 ('pic007', 's3://6224-fa24-g4/a004.jpg', 'Avatar'),
