@@ -14,7 +14,7 @@ const RecipeCard = ({ image, name, id, userId }) => {
 
     const fetchAuthorName = async () => {
       try {
-        const response = await axios.get(`http://100.27.27.91/api/users/${userId}`);
+        const response = await axios.get(`http://localhost:5000/api/users/${userId}`);
         if (isMounted && response.data.name) {
           setAuthorName(response.data.name); // 更新作者名称
         } else {
