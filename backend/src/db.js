@@ -1,9 +1,9 @@
 import mysql from 'mysql2';
 
 const pool = mysql.createPool({
-  host: 'db-6225-g4.cluster-c7884y4gw831.us-east-1.rds.amazonaws.com', 
+  host: 'recipecoeaterdb.cluster-c7884y4gw831.us-east-1.rds.amazonaws.com', 
   user: 'admin',      
-  password: 'Y3vsMaSzcrV5jYhT4dto', 
+  password: 'XovJlmWfbwwgF7FHUyDG', 
   database: 'group4db', 
 
   port: 3306,
