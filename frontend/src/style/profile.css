@@ -89,7 +89,7 @@
     justify-content: flex-start;
     margin-top: 20px;
     overflow-y: auto;
-    max-height: 400px;
+    max-height: 600px;
     padding-right: 10px;
   }
   
@@ -104,7 +104,7 @@
   
   .profile-recipe-list-custom  .recipe-card img {
     width: 100%; /* 图片自动缩放 */
-    height: auto;
+    /* height: auto; */
     border-radius: 5px;
   }
   

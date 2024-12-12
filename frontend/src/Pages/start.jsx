@@ -10,7 +10,7 @@ const Start = () => {
 
   const handleRandomPick = async () => {
     try {
-      const response = await axios.get("http://100.27.27.91:5000/api/recipes/random");
+      const response = await axios.get("http://100.27.27.91/api/recipes/random");
       if (response.data && response.data.recipeID) {
         navigate(`/recipes/${response.data.recipeID}`);
       } else {

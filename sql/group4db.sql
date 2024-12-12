@@ -81,23 +81,22 @@ CREATE TABLE likes(
 
 INSERT INTO pictures (pictureID, url, usage_info) 
 VALUES
-('defaultAvatar', 'https://6224-fa24-g4.s3.us-east-1.amazonaws.com/a000.svg', 'Avatar'),
-('defaultRecipe', 's3://6224-fa24-g4/r000.jpg', 'Recipes'),
-('pic001', 's3://6224-fa24-g4/a001.jpg', 'Avatar'),
-('pic002', 's3://6224-fa24-g4/r001.jpg', 'Recipes'),
-('pic003', 's3://6224-fa24-g4/a002.png', 'Avatar'),
+('pic001', 'https://6224-fa24-g4.s3.us-east-1.amazonaws.com/a001.jpg', 'Avatar'),
+('pic002', 'https://6224-fa24-g4.s3.us-east-1.amazonaws.com/r001.jpg', 'Recipes'),
+('pic003', 'https://6224-fa24-g4.s3.us-east-1.amazonaws.com/a002.png', 'Avatar'),
 ('pic004', 'https://6224-fa24-g4.s3.us-east-1.amazonaws.com/r002.jpg', 'Recipes'),
-('pic005', 's3://6224-fa24-g4/a003.jpg', 'Avatar'),
-('pic006', 's3://6224-fa24-g4/r003.jpg', 'Recipes'),
-('pic007', 's3://6224-fa24-g4/a004.jpg', 'Avatar'),
-('pic008', 's3://6224-fa24-g4/r004.jpg', 'Recipes'),
-('pic009', 's3://6224-fa24-g4/a005.jpg', 'Avatar'),
-('pic010', 's3://6224-fa24-g4/r005.jpg', 'Recipes'),
-('pic011', 's3://6224-fa24-g4/r006.jpg', 'Recipes'),
-('pic012', 's3://6224-fa24-g4/r007.jpg', 'Recipes'),
-('pic013', 's3://6224-fa24-g4/r008.jpg', 'Recipes'),
-('pic014', 's3://6224-fa24-g4/r009.jpg', 'Recipes'),
-('pic015', 's3://6224-fa24-g4/r010.jpg', 'Recipes');
+('pic005', 'https://6224-fa24-g4.s3.us-east-1.amazonaws.com/a003.jpg', 'Avatar'),
+('pic006', 'https://6224-fa24-g4.s3.us-east-1.amazonaws.com/r003.jpg', 'Recipes'),
+('pic007', 'https://6224-fa24-g4.s3.us-east-1.amazonaws.com/a004.jpg', 'Avatar'),
+('pic008', 'https://6224-fa24-g4.s3.us-east-1.amazonaws.com/r004.jpg', 'Recipes'),
+('pic009', 'https://6224-fa24-g4.s3.us-east-1.amazonaws.com/a005.jpg', 'Avatar'),
+('pic010', 'https://6224-fa24-g4.s3.us-east-1.amazonaws.com/r005.jpg', 'Recipes'),
+('pic011', 'https://6224-fa24-g4.s3.us-east-1.amazonaws.com/r006.jpg', 'Recipes'),
+('pic012', 'https://6224-fa24-g4.s3.us-east-1.amazonaws.com/r007.jpg', 'Recipes'),
+('pic013', 'https://6224-fa24-g4.s3.us-east-1.amazonaws.com/r008.jpg', 'Recipes'),
+('pic014', 'https://6224-fa24-g4.s3.us-east-1.amazonaws.com/r009.jpg', 'Recipes'),
+('pic015', 'https://6224-fa24-g4.s3.us-east-1.amazonaws.com/r010.jpg', 'Recipes');
+
 
 INSERT INTO users (userID, name, gender, age, email, phoneNum, password, avatarID)
 VALUES

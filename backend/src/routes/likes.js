@@ -29,8 +29,8 @@ router.post('/recipes/:id/like', auth, async (req, res) => {
       userId,
     ]);
 
-    // Increment the like count for the recipe
-    await db.query('UPDATE recipes SET likes = likes + 1 WHERE recipeID = ?', [recipeId]);
+    // // Increment the like count for the recipe
+    // await db.query('UPDATE recipes SET likes = likes + 1 WHERE recipeID = ?', [recipeId]);
 
     res.json({ message: 'Recipe liked successfully' });
   } catch (error) {
@@ -60,10 +60,25 @@ router.delete('/recipes/:id/like', auth, async (req, res) => {
     // Remove like from the database
     await db.query('DELETE FROM likes WHERE recipeID = ? AND userID = ?', [recipeId, userId]);
 
-    // Decrement the like count for the recipe
-    await db.query('UPDATE recipes SET likes = likes - 1 WHERE recipeID = ?', [recipeId]);
+    // // Decrement the like count for the recipe
+    // await db.query('UPDATE recipes SET likes = likes - 1 WHERE recipeID = ?', [recipeId]);
 
     res.json({ message: 'Recipe unliked successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Get like-status for a specific recipe
+router.get('/recipes/:recipeId/:userId/like-status', async (req, res) => {
+  const recipeId = req.params.recipeId;
+  const userId = req.params.userId;
+
+  try {
+    // Retrieve like-status for the recipe from the database
+    const [likes] = await db.query('SELECT * FROM likes WHERE recipeID = ? and userID = ?', [recipeId, userId]);
+    res.json(likes);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });

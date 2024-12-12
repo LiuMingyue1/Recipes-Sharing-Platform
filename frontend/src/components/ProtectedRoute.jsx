@@ -3,9 +3,9 @@ import { Navigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useContext(AuthContext);
-
-  if (!user) {
+  // const { user } = useContext(AuthContext);
+  const { userId } = localStorage.getItem('userId');
+  if (!userId) {
     // 如果用户未登录，重定向到登录页面
     return <Navigate to="/login" replace />;
   }
