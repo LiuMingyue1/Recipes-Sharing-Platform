@@ -22,33 +22,33 @@ const Detail = () => {
   useEffect(() => {
     const fetchRecipeData = async () => {
       try {
-        const recipeResponse = await axios.get(`http://localhost:5000/api/recipes/${recipeId}`);
+        const recipeResponse = await axios.get(`http://www.coeater.com:5000/api/recipes/${recipeId}`);
         const recipeData = recipeResponse.data;
         setRecipe(recipeData);
 
-        const userResponse = await axios.get(`http://localhost:5000/api/users/${recipeData.userID}`);
+        const userResponse = await axios.get(`http://www.coeater.com:5000/api/users/${recipeData.userID}`);
         setAuthorName(userResponse.data.name);
 
-        const commentsResponse = await axios.get(`http://localhost:5000/api/recipes/${recipeId}/comments`);
+        const commentsResponse = await axios.get(`http://www.coeater.com:5000/api/recipes/${recipeId}/comments`);
         const commentData = await Promise.all(
           commentsResponse.data.map(async (comment) => {
-            const userResponse = await axios.get(`http://localhost:5000/api/users/${comment.userID}`);
+            const userResponse = await axios.get(`http://www.coeater.com:5000/api/users/${comment.userID}`);
             return { ...comment, username: userResponse.data.name };
           })
         );
         setComments(commentData);
 
-        const ingredientsResponse = await axios.get(`http://localhost:5000/api/recipes/${recipeId}/ingredients`);
+        const ingredientsResponse = await axios.get(`http://www.coeater.com:5000/api/recipes/${recipeId}/ingredients`);
         setRecipe((prevRecipe) => ({
           ...prevRecipe,
           ingredients: ingredientsResponse.data,
         }));
 
         const userId = localStorage.getItem("userId");
-        const likeStatusResponse = await axios.get(`http://localhost:5000/api/recipes/${recipeId}/${userId}/like-status`);
+        const likeStatusResponse = await axios.get(`http://www.coeater.com:5000/api/recipes/${recipeId}/${userId}/like-status`);
         setIsLiked(likeStatusResponse.data[0] ? likeStatusResponse.data[0].status:0);
 
-        // const currentUserResponse = await axios.get("http://localhost:5000/api/auth/check", {
+        // const currentUserResponse = await axios.get("http://www.coeater.com:5000/api/auth/check", {
         //   headers: { "user-id": localStorage.getItem("userId") },
         // });
         // setUserName(currentUserResponse.data.name || "Unknown User");
@@ -71,11 +71,11 @@ const Detail = () => {
 
     try {
       if (isLiked) {
-        await axios.delete(`http://localhost:5000/api/recipes/${recipeId}/like`, {
+        await axios.delete(`http://www.coeater.com:5000/api/recipes/${recipeId}/like`, {
           headers: { "user-id": userId },
         });
       } else {
-        await axios.post(`http://localhost:5000/api/recipes/${recipeId}/like`, {}, {
+        await axios.post(`http://www.coeater.com:5000/api/recipes/${recipeId}/like`, {}, {
           headers: { "user-id": userId },
         });
       }
@@ -97,7 +97,7 @@ const Detail = () => {
 
     try {
       await axios.post(
-        `http://localhost:5000/api/recipes/${recipeId}/comments`,
+        `http://www.coeater.com:5000/api/recipes/${recipeId}/comments`,
         { content: newComment },
         { headers: { "user-id": userId } }
       );
@@ -133,7 +133,7 @@ const Detail = () => {
       <div className="recipe-detail">
         <div className="detail-left">
           <div className="detail-image-container">
-            <img src={'http://localhost:5000/'+recipe.pictureID+'.jpg'} alt={recipe.name} className="detail-image" />
+            <img src={'http://www.coeater.com:5000/'+recipe.pictureID+'.jpg'} alt={recipe.name} className="detail-image" />
           </div>
           <div className="detail-comments">
             <ul>

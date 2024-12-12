@@ -20,14 +20,14 @@ const Profile = () => {
     const fetchProfileData = async () => {
       try {
         // Fetch user data
-        const userInfoResponse = await axios.get(`http://localhost:5000/api/users/${userId}`);
+        const userInfoResponse = await axios.get(`http://www.coeater.com:5000/api/users/${userId}`);
         setProfileData(userInfoResponse.data);
 
         // Fetch recipes data
         const endpoint =
           viewMode === "publish"
-            ? `http://localhost:5000/api/users/${userId}/my-recipes`
-            : `http://localhost:5000/api/users/${userId}/liked-recipes`;
+            ? `http://www.coeater.com:5000/api/users/${userId}/my-recipes`
+            : `http://www.coeater.com:5000/api/users/${userId}/liked-recipes`;
         const recipesResponse = await axios.get(endpoint);
         setRecipes(recipesResponse.data);
       } catch (error) {
@@ -47,7 +47,7 @@ const Profile = () => {
       <Navbar currentPageLink={`/profile/${userId}`} hideSearch={true} />
       <div className="profile-card-custom">
         <img
-          src={profileData.avatarID ? 'http://localhost:5000/'+profileData.avatarID+'.jpg' : "/src/assets/avatar.svg"}
+          src={profileData.avatarID ? 'http://www.coeater.com:5000/'+profileData.avatarID+'.jpg' : "/src/assets/avatar.svg"}
           alt={profileData.name}
           className="profile-avatar-custom"
         />
@@ -88,7 +88,7 @@ const Profile = () => {
             <RecipeCard
               key={recipe.recipeID}
               id={recipe.recipeID}
-              image={'http://localhost:5000/'+recipe.pictureID+'.jpg'}
+              image={'http://www.coeater.com:5000/'+recipe.pictureID+'.jpg'}
               name={recipe.name}
               author={recipe.author}
               userId={recipe.userID}

@@ -12,7 +12,7 @@ const Home = () => {
 
   const fetchRecipes = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/recipes");
+      const response = await axios.get("http://www.coeater.com:5000/api/recipes");
       if (Array.isArray(response.data)) {
         setRecipes(response.data);
         setFilteredRecipes(response.data); // 默认显示所有食谱
@@ -50,7 +50,7 @@ const Home = () => {
 
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/recipes/searchString/${query}`
+        `http://www.coeater.com:5000/api/recipes/searchString/${query}`
       );
       if (Array.isArray(response.data)) {
         setFilteredRecipes(response.data); // 更新搜索结果
@@ -107,7 +107,7 @@ const Home = () => {
               key={recipe.recipeID}
               id={recipe.recipeID}
               // image={recipe.pictureID+'.png'}
-              image={'http://localhost:5000/'+recipe.pictureID+'.jpg'}
+              image={'http://www.coeater.com:5000/'+recipe.pictureID+'.jpg'}
               name={recipe.name}
               author={recipe.author || "Unknown Author"}
               userId={recipe.userID}
