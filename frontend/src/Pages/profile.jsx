@@ -88,7 +88,7 @@ const Profile = () => {
             <RecipeCard
               key={recipe.recipeID}
               id={recipe.recipeID}
-              image={'http://www.coeater.com:5000/'+recipe.pictureID+'.jpg'}
+              image={'http://www.coeater.com/'+recipe.pictureID+'.jpg'}
               name={recipe.name}
               author={recipe.author}
               userId={recipe.userID}
