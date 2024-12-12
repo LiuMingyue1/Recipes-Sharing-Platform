@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import '../style/registerForm.css';
 
 const RegisterForm = () => {
+	
+	const navigate = useNavigate();
+	
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phonenumber: '',
     country: 'US',
-    state: '',
-    city: '',
-    address: '',
-    postalcode: '',
+    age:'',
     password: '',
+	gender:'',
   });
 
   const [submittedData, setSubmittedData] = useState(null);
@@ -35,22 +37,19 @@ const RegisterForm = () => {
         email: formData.email,
         phone: formData.phonenumber,
         password: formData.password,
-        address: `${formData.address}, ${formData.city}, ${formData.state}, ${formData.country}`,
-        postalCode: formData.postalcode,
+        age:formData.age,
+		gender:formData.gender,
       });
-
-      setSubmittedData(response.data);
-      setFormData({
-        name: '',
-        email: '',
-        phonenumber: '',
-        country: 'US',
-        state: '',
-        city: '',
-        address: '',
-        postalcode: '',
-        password: '',
-      });
+	  navigate(`/login`);
+      // setSubmittedData(response.data);
+      // setFormData({
+      //   name: '',
+      //   email: '',
+      //   phonenumber: '',
+      //   country: 'US',
+      //   age:'',
+      //   password: '',
+      // });
     } catch (err) {
       console.error(err);
       setError('Failed to register. Please try again later.');
@@ -125,53 +124,31 @@ const RegisterForm = () => {
           </div>
         </div>
 
-        {/* State */}
+        {/* age */}
         <div className="form-row full-width">
-          <label htmlFor="state">State</label>
+          <label htmlFor="state">Age</label>
           <input
             type="text"
-            id="state"
-            name="state"
-            value={formData.state}
+            id="age"
+            name="age"
+            value={formData.age}
             onChange={handleChange}
           />
         </div>
-
-        {/* City */}
-        <div className="form-row full-width">
-          <label htmlFor="city">City</label>
-          <input
-            type="text"
-            id="city"
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-          />
-        </div>
-
-        {/* Address */}
-        <div className="form-row full-width">
-          <label htmlFor="address">Address</label>
-          <input
-            type="text"
-            name="address"
-            id="address"
-            value={formData.address}
-            onChange={handleChange}
-          />
-        </div>
-
-        {/* ZIP / Postal Code */}
-        <div className="form-row full-width">
-          <label htmlFor="postalcode">ZIP / Postal Code</label>
-          <input
-            type="text"
-            id="postalcode"
-            name="postalcode"
-            value={formData.postalcode}
-            onChange={handleChange}
-          />
-        </div>
+		
+		{/* gender */}
+		<div className="form-row full-width">
+		  <label htmlFor="state">Gender</label>
+		  <select
+		    id="gender"
+		    name="gender"
+		    value={formData.gender}
+		    onChange={handleChange}
+		  >
+		    <option value="male">male</option>
+		    <option value="female">female</option>
+		  </select>
+		</div>
 
         {/* Submit Button */}
         <div>
@@ -180,17 +157,6 @@ const RegisterForm = () => {
       </form>
 
       {error && <div className="error-message">{error}</div>}
-
-      {submittedData && (
-        <div className="submitted-data">
-          <p><strong>Name:</strong> {submittedData.name}</p>
-          <p><strong>Email Address:</strong> {submittedData.email}</p>
-          <p><strong>Phone Number:</strong> {submittedData.phone}</p>
-          <p><strong>Country:</strong> {submittedData.country}</p>
-          <p><strong>Address:</strong> {submittedData.address}</p>
-          <p><strong>ZIP / Postal Code:</strong> {submittedData.postalCode}</p>
-        </div>
-      )}
     </div>
   );
 };

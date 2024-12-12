@@ -22,7 +22,7 @@ const upload = multer({ storage });
 
 // 创建新食谱
 router.post("/recipes", auth, upload.single("image"), async (req, res) => {
-  const { name, content, category } = req.body;
+  const { name, content, category, ingredients } = req.body;
   const userId = req.userId; // 从认证中获取 userID
   const imagePath = req.file ? req.file.path : null; // 获取图片路径
 
@@ -44,12 +44,29 @@ router.post("/recipes", auth, upload.single("image"), async (req, res) => {
         imagePath,
       ]);
     }
-
     // 插入食谱记录到 recipes 表
     await db.query(
       "INSERT INTO recipes (recipeID, pictureID, userID, name, content, category) VALUES (?, ?, ?, ?, ?, ?)",
       [recipeID, pictureID, userId, name, content, category]
     );
+    console.log(`req: ${req}`);
+    console.log(`ingredients: ${ingredients}`);
+    if(ingredients) {
+      const ingredientArr = JSON.parse(ingredients);
+      for (let i = 0; i < ingredientArr.length; i++) {
+        const ingredient = ingredientArr[i];
+        console.log(`ingredient: `, ingredient);
+        const [ingredientTemp] = await db.query("SELECT * FROM ingredients WHERE name = ?", [ingredient.name]);
+        console.log(`ingredientTemp:`, ingredientTemp);
+        // 插入食谱原料关联表
+        await db.query(
+          "INSERT INTO recipe_ingredients (ingredientID, recipeID, optional, unit, methods, quantity) VALUES (?, ?, ?, ?, ?, ?)",
+          [ingredientTemp[0].ingredientID, recipeID, ingredient.optional, ingredient.unit, ingredient.method, ingredient.quantity]
+        );
+      }
+    }
+
+    
 
     res.status(201).json({
       message: "Recipe added successfully",
@@ -77,6 +94,17 @@ router.get("/recipes", async (req, res) => {
   }
 });
 
+// 根据搜索条件获取食谱
+router.get("/recipes/searchString/:string", async (req, res) => {
+  try {
+    const [recipes] = await db.query("SELECT * FROM recipes where name like ?", ["%" + req.params.string + "%",]);
+    res.json(recipes);
+  } catch (error) {
+    console.error("Error fetching recipes:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 // 获取随机食谱
 router.get("/recipes/random", async (req, res) => {
   try {
@@ -86,6 +114,22 @@ router.get("/recipes/random", async (req, res) => {
     }
     const randomIndex = Math.floor(Math.random() * recipes.length);
     res.json(recipes[randomIndex]);
+  } catch (error) {
+    console.error("Error fetching random recipe:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// 根据id获取食谱
+router.get("/recipes/:id", async (req, res) => {
+  try {
+    const [recipes] = await db.query("SELECT * FROM recipes WHERE recipeID = ?", [
+      req.params.id,
+    ]);
+    if (recipes.length === 0) {
+      return res.status(404).json({ message: "No recipes available" });
+    }
+    res.json(recipes[0]);
   } catch (error) {
     console.error("Error fetching random recipe:", error);
     res.status(500).json({ message: "Internal server error" });

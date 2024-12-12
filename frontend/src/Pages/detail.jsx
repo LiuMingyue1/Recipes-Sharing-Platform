@@ -22,37 +22,36 @@ const Detail = () => {
   useEffect(() => {
     const fetchRecipeData = async () => {
       try {
-        const recipeResponse = await axios.get(`http://100.27.27.91:5000/api/recipes/${recipeId}`);
+        const recipeResponse = await axios.get(`http://100.27.27.91/api/recipes/${recipeId}`);
         const recipeData = recipeResponse.data;
         setRecipe(recipeData);
 
-        const userResponse = await axios.get(`http://100.27.27.91:5000/api/users/${recipeData.userID}`);
+        const userResponse = await axios.get(`http://100.27.27.91/api/users/${recipeData.userID}`);
         setAuthorName(userResponse.data.name);
 
-        const commentsResponse = await axios.get(`http://100.27.27.91:5000/api/recipes/${recipeId}/comments`);
+        const commentsResponse = await axios.get(`http://100.27.27.91/api/recipes/${recipeId}/comments`);
         const commentData = await Promise.all(
           commentsResponse.data.map(async (comment) => {
-            const userResponse = await axios.get(`/api/users/${comment.userID}`);
+            const userResponse = await axios.get(`http://100.27.27.91/api/users/${comment.userID}`);
             return { ...comment, username: userResponse.data.name };
           })
         );
         setComments(commentData);
 
-        const ingredientsResponse = await axios.get(`http://100.27.27.91:5000/api/recipes/${recipeId}/ingredients`);
+        const ingredientsResponse = await axios.get(`http://100.27.27.91/api/recipes/${recipeId}/ingredients`);
         setRecipe((prevRecipe) => ({
           ...prevRecipe,
           ingredients: ingredientsResponse.data,
         }));
 
-        const likeStatusResponse = await axios.get(`http://100.27.27.91:5000/api/recipes/${recipeId}/like-status`, {
-          headers: { "user-id": localStorage.getItem("userId") },
-        });
-        setIsLiked(likeStatusResponse.data.liked);
+        const userId = localStorage.getItem("userId");
+        const likeStatusResponse = await axios.get(`http://100.27.27.91/api/recipes/${recipeId}/${userId}/like-status`);
+        setIsLiked(likeStatusResponse.data[0] ? likeStatusResponse.data[0].status:0);
 
-        const currentUserResponse = await axios.get("/api/auth/check", {
-          headers: { "user-id": localStorage.getItem("userId") },
-        });
-        setUserName(currentUserResponse.data.name || "Unknown User");
+        // const currentUserResponse = await axios.get("http://localhost:5000/api/auth/check", {
+        //   headers: { "user-id": localStorage.getItem("userId") },
+        // });
+        // setUserName(currentUserResponse.data.name || "Unknown User");
       } catch (err) {
         console.error("Error fetching recipe details:", err);
         setError("Unable to fetch recipe details. Please try again later.");
@@ -72,15 +71,16 @@ const Detail = () => {
 
     try {
       if (isLiked) {
-        await axios.delete(`http://100.27.27.91:5000/api/recipes/${recipeId}/like`, {
+        await axios.delete(`http://100.27.27.91/api/recipes/${recipeId}/like`, {
           headers: { "user-id": userId },
         });
       } else {
-        await axios.post(`http://100.27.27.91:5000/api/recipes/${recipeId}/like`, {}, {
+        await axios.post(`http://100.27.27.91/api/recipes/${recipeId}/like`, {}, {
           headers: { "user-id": userId },
         });
       }
       setIsLiked(!isLiked);
+	  alert("Set like success!");
     } catch (error) {
       console.error("Error toggling like:", error);
       alert("An error occurred. Please try again.");
@@ -97,7 +97,7 @@ const Detail = () => {
 
     try {
       await axios.post(
-        `http://100.27.27.91:5000/api/recipes/${recipeId}/comments`,
+        `http://100.27.27.91/api/recipes/${recipeId}/comments`,
         { content: newComment },
         { headers: { "user-id": userId } }
       );
@@ -133,7 +133,7 @@ const Detail = () => {
       <div className="recipe-detail">
         <div className="detail-left">
           <div className="detail-image-container">
-            <img src={recipe.image || "/default-recipe.png"} alt={recipe.name} className="detail-image" />
+            <img src={'http://100.27.27.91/'+recipe.pictureID+'.jpg'} alt={recipe.name} className="detail-image" />
           </div>
           <div className="detail-comments">
             <ul>
