@@ -1,10 +1,11 @@
--- CREATE database Jiawei;
+CREATE database group4db;
 
+-- DROP DATABASE group4db;
 use group4db;
 
 -- CREATE SCHEMA recipe;
 
-DROP TABLE IF EXISTS recipe_Ingredients;
+DROP TABLE IF EXISTS recipe_ingredients;
 DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS likes;
 DROP TABLE IF EXISTS ingredients;
@@ -46,7 +47,7 @@ CREATE TABLE ingredients(
 	name VARCHAR(50)
 	);
 
-CREATE TABLE recipe_Ingredients(
+CREATE TABLE recipe_ingredients(
 	ingredientID VARCHAR(30),
 	recipeID VARCHAR(30),
 	optional TINYINT,
@@ -132,7 +133,7 @@ VALUES
 ('ing009', 'Lettuce'),
 ('ing010', 'Chocolate');
 
-INSERT INTO recipe_Ingredients (ingredientID, recipeID, optional, unit, methods, quantity)
+INSERT INTO recipe_ingredients (ingredientID, recipeID, optional, unit, methods, quantity)
 VALUES
 ('ing001', 'r001', 0, 'pcs', 'Chopped', 3),
 ('ing003', 'r001', 0, 'pcs', 'Chopped', 1),
