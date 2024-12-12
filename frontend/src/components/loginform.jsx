@@ -14,12 +14,11 @@ const LoginForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('/api/users/login', { email, password });
+      const response = await axios.post('http://localhost:5000/api/users/login', { email, password });
       const { userId } = response.data;
   
       // 存储 userId
       localStorage.setItem('userId', userId);
-  
       alert('Login successful!');
       navigate(`/profile/${userId}`); // 跳转到用户的 Profile 页面
     } catch (err) {

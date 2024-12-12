@@ -8,7 +8,7 @@ const upload = multer({ dest: 'uploads/' });
 
 // Register
 router.post('/users', upload.single('avatar'), async (req, res) => {
-  const { email, phone, password } = req.body;
+  const { email, phone, password, age, gender } = req.body;
   const avatarPath = req.file ? req.file.path : null;
 
   try {
@@ -26,12 +26,13 @@ router.post('/users', upload.single('avatar'), async (req, res) => {
 
     // Insert new user into the database
     const userID = Date.now().toString();
-    await db.query('INSERT INTO users (userID, email, phoneNum, password, avatarID) VALUES (?, ?, ?, ?, ?)', [
+    await db.query('INSERT INTO users (userID, email, phoneNum, password, age, gender) VALUES (?, ?, ?, ?, ?, ?)', [
       userID,
       email,
       phone,
       password,
-      avatarPath,
+      age,
+      gender,
     ]);
 
     res.status(201).json({ userID, email, phone });
@@ -124,8 +125,8 @@ router.get('/users/:userId/liked-recipes', async (req, res) => {
 });
 
 // Get published recipes
-router.get('/users/my-recipes', auth, async (req, res) => {
-  const userId = req.userId;
+router.get('/users/:userId/my-recipes', async (req, res) => {
+  const userId = req.params.userId;
 
   try {
     const [recipes] = await db.query('SELECT * FROM recipes WHERE userID = ?', [userId]);

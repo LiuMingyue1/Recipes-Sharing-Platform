@@ -16,12 +16,12 @@ const App = () => {
     <AuthProvider>
       <Routes>
         <Route path="/" element={<Start />} />
-        <Route path="/profile/:userId" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/profile/:userId" element={<Profile />} />
         <Route path="/home" element={<Home />} />
         <Route path="/recipes/:recipeId" element={<Detail />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/add" element={<ProtectedRoute><Add /></ProtectedRoute>} />
+        <Route path="/add" element={<Add />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AuthProvider>

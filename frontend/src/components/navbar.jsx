@@ -9,6 +9,7 @@ import "../style/navbar.css";
 
 const Navbar = ({ currentPageLink, onSearch }) => {
   const { user } = useContext(AuthContext);
+  const userId = localStorage.getItem("userId");
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearchClick = () => {
@@ -58,11 +59,8 @@ const Navbar = ({ currentPageLink, onSearch }) => {
         <Link to="/add">
           <img src={navaddIcon} alt="Add Icon" className="navbar-icon" />
         </Link>
-        <Link to={user ? `/profile/${user.userId}` : "/login"}>
+        <Link to={userId ? `/profile/${userId}` : "/login"}>
           <img src={navuserIcon} alt="User Icon" className="navbar-icon" />
-        </Link>
-        <Link to="/like">
-          <img src={navlikeIcon} alt="Like Icon" className="navbar-icon" />
         </Link>
       </div>
     </div>
