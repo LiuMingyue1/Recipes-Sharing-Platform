@@ -54,9 +54,13 @@ cd ../backend
 npm install
 # Configure .env for DB credentials
 npm start
+```
 
 ## 🛠️ Database Setup
-
-```sql
+sql
 CREATE DATABASE recipe_platform;
 -- Import schema.sql or run ORM migration scripts
+
+### 🏠 Homepage
+![Homepage Screenshot](./frontend/src/assets/Homepage.JPG)
+
