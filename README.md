@@ -52,12 +52,13 @@ npm run dev
 # Backend Setup
 cd ../backend
 npm install
-# Configure .env for DB credentials
-npm start
+
 # Database Setup
 CREATE DATABASE recipe_platform;
-```
 
+# Configure .env for DB credentials
+npm start
+```
 
 ### 🏠 Homepage
 ![Homepage Screenshot](./frontend/src/assets/Homepage.JPG)
